@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --app-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-color: #1f2a44;
+  --muted-text: #7f8c8d;
+  --border-color: #e2e8f0;
+  --shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+  --primary: #42a5f5;
+  --accent: #ff6b6b;
+}
+
+body {
+  font-family: 'Urbanist', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background-color: var(--app-bg);
+  color: var(--text-color);
+}
+
+.app-wrapper {
+  min-height: 100vh;
+  background-color: var(--app-bg);
+}
+
+.dashboard-container {
+  padding: 2rem 1rem 3rem;
+}
+
+.page-header h1 {
+  color: var(--text-color);
+}
+
+.page-header p {
+  color: var(--muted-text);
+}
+
+.modern-card {
+  border: none;
+  border-radius: 18px;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow);
+}
+
+.modern-card .card-heading {
+  margin-bottom: 1rem;
+}
+
+.modern-card .card-heading .card-title {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.modern-card .card-heading p {
+  color: var(--muted-text);
+  font-size: 0.95rem;
+}
+
+.segment-button-group .btn {
+  border-radius: 999px;
+  padding: 0.45rem 1.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.segment-button-group .btn:not(:last-child) {
+  margin-right: 0.5rem;
+}
+
+.section-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted-text);
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.ranking-dropdown .Select__control,
+.ranking-dropdown .Select-control {
+  border-radius: 12px !important;
+  border-color: var(--border-color) !important;
+  box-shadow: none !important;
+}
+
+.dash-debug-menu {
+  display: none;
+}
+
+.offcanvas-title {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.offcanvas .btn {
+  border-radius: 12px;
+}
+
