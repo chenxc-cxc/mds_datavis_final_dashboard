@@ -1,5 +1,2 @@
-   backend/cache/events.duckdb
-   backend/archive/events*.csv
-   archive/events_with_category.csv
-   backend/archive/item_properties_part1.csv
-   backend/archive/item_properties_part2.csv
+*.duckdb
+*.csv
