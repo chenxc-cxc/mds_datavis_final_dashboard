@@ -167,14 +167,20 @@ export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onCl
           <div
             className="text-xl font-bold"
             style={{
-              background: `linear-gradient(135deg, ${stage ? stageColors[stage] : "#00d4ff"} 0%, ${stage ? stageColors[stage] : "#8338ec"} 100%)`,
+              // background: `linear-gradient(135deg, ${stage ? stageColors[stage] : "#00d4ff"} 0%, ${stage ? stageColors[stage] : "#8338ec"} 100%)`,
               WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              // WebkitTextFillColor: "transparent",
+              color: "black",
             }}
           >
             {data?.stage_label || stageLabels[stage || ""] || "阶段详情"}
           </div>
-          <div className="text-muted text-xs mt-1">用户群体: {segment}</div>
+          <div className="text-muted text-xs mt-1"
+            style={{
+              // background: `linear-gradient(135deg, ${stage ? stageColors[stage] : "#00d4ff"} 0%, ${stage ? stageColors[stage] : "#83338ec"} 100%)`,
+              color: "black",
+            }}
+          >用户群体: {segment}</div>
         </div>
       }
       width={700}
@@ -362,12 +368,14 @@ export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onCl
               <div className="text-sm text-muted uppercase tracking-widest mb-4">
                 热门商品 Top {data.top_items.length}
               </div>
-              <BarChart
-                categories={data.top_items.map((item) => item.label)}
-                values={data.top_items.map((item) => item.value)}
-                color={stage ? stageColors[stage] : "#00d4ff"}
-                horizontal
-              />
+              <div style={{ height: "280px", width: "100%" }}>
+                <BarChart
+                  categories={data.top_items.map((item) => item.label)}
+                  values={data.top_items.map((item) => item.value)}
+                  color={stage ? stageColors[stage] : "#00d4ff"}
+                  horizontal
+                />
+              </div>
             </div>
           )}
 
@@ -377,12 +385,14 @@ export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onCl
               <div className="text-sm text-muted uppercase tracking-widest mb-4">
                 热门类别 Top {data.top_categories.length}
               </div>
-              <BarChart
-                categories={data.top_categories.map((cat) => cat.label)}
-                values={data.top_categories.map((cat) => cat.value)}
-                color={stage ? stageColors[stage] : "#ff006e"}
-                horizontal
-              />
+              <div style={{ height: "280px", width: "100%" }}>
+                <BarChart
+                  categories={data.top_categories.map((cat) => cat.label)}
+                  values={data.top_categories.map((cat) => cat.value)}
+                  color={stage ? stageColors[stage] : "#ff006e"}
+                  horizontal
+                />
+              </div>
             </div>
           )}
         </div>

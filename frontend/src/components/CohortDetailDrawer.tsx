@@ -163,7 +163,7 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
       title={
         <div>
           <div className="text-gradient text-xl font-bold">
-            Cohort {data?.cohort_month ?? cohortMonth} 深度洞察
+            Cohort {data?.cohort_month ?? cohortMonth} 分析
           </div>
           <div className="text-muted text-xs mt-1">用户群体: {segment}</div>
         </div>

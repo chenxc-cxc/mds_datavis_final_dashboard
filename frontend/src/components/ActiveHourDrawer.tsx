@@ -377,12 +377,14 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
               <div className="text-sm text-muted uppercase tracking-widest mb-4">
                 热门商品 Top {data.top_items.length}
               </div>
-              <BarChart
-                categories={data.top_items.map((item) => item.label)}
-                values={data.top_items.map((item) => item.value)}
-                color="#00d4ff"
-                horizontal
-              />
+              <div style={{ height: "280px", width: "100%" }}>
+                <BarChart
+                  categories={data.top_items.map((item) => item.label)}
+                  values={data.top_items.map((item) => item.value)}
+                  color="#00d4ff"
+                  horizontal
+                />
+              </div>
             </div>
           )}
 
@@ -392,12 +394,14 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
               <div className="text-sm text-muted uppercase tracking-widest mb-4">
                 热门类别 Top {data.top_categories.length}
               </div>
-              <BarChart
-                categories={data.top_categories.map((cat) => cat.label)}
-                values={data.top_categories.map((cat) => cat.value)}
-                color="#ff006e"
-                horizontal
-              />
+              <div style={{ height: "280px", width: "100%" }}>
+                <BarChart
+                  categories={data.top_categories.map((cat) => cat.label)}
+                  values={data.top_categories.map((cat) => cat.value)}
+                  color="#ff006e"
+                  horizontal
+                />
+              </div>
             </div>
           )}
         </div>
