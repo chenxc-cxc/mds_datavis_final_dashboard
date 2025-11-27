@@ -18,6 +18,11 @@ export function BarChart({
   onBarClick,
 }: BarChartProps) {
   const chartRef = useRef<ECharts | null>(null);
+  
+  // 水平柱状图时反转数组，让 Top1 显示在最上面
+  const displayCategories = horizontal ? [...categories].reverse() : categories;
+  const displayValues = horizontal ? [...values].reverse() : values;
+  
   const option = {
     backgroundColor: "transparent",
     grid: { left: horizontal ? 80 : 60, right: 30, top: 30, bottom: horizontal ? 40 : 60 },
@@ -31,14 +36,14 @@ export function BarChart({
         }
       : {
           type: "category",
-          data: categories,
+          data: displayCategories,
           axisLabel: { color: "#64748b", rotate: 30, fontSize: 12 },
           axisLine: { lineStyle: { color: "rgba(59, 130, 246, 0.2)" } },
         },
     yAxis: horizontal
       ? {
           type: "category",
-          data: categories,
+          data: displayCategories,
           axisLabel: { color: "#64748b", fontSize: 12 },
           axisLine: { lineStyle: { color: "rgba(59, 130, 246, 0.2)" } },
         }
@@ -67,7 +72,7 @@ export function BarChart({
     series: [
       {
         type: "bar",
-        data: values.map((val) => ({
+        data: displayValues.map((val) => ({
           value: val,
           itemStyle: {
             borderRadius: horizontal ? [0, 8, 8, 0] : [8, 8, 0, 0],
@@ -161,10 +166,14 @@ export function BarChart({
           onBarClick
             ? {
                 click: (params: { name: string; value: number; dataIndex: number }) => {
+                  // 如果水平模式下反转了数组，需要计算原始索引
+                  const originalIndex = horizontal 
+                    ? displayCategories.length - 1 - (params.dataIndex as number)
+                    : (params.dataIndex as number);
                   onBarClick({
                     name: params.name as string,
                     value: params.value as number,
-                    index: params.dataIndex as number,
+                    index: originalIndex,
                   });
                 },
               }
