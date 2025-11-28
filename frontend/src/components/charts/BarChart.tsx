@@ -23,8 +23,15 @@ export function BarChart({
   const displayCategories = horizontal ? [...categories].reverse() : categories;
   const displayValues = horizontal ? [...values].reverse() : values;
   
+  // 计算动画配置：让柱子和坐标轴从底部向上依次出现
+  // 由于数组已反转，底部对应索引大的元素，顶部对应索引小的元素
+  const totalBars = displayValues.length;
+  
   const option = {
     backgroundColor: "transparent",
+    animation: true,
+    animationDuration: horizontal ? 800 : 600,
+    animationEasing: "cubicOut",
     grid: { left: horizontal ? 80 : 60, right: 30, top: 30, bottom: horizontal ? 40 : 60 },
     xAxis: horizontal
       ? {
@@ -72,7 +79,7 @@ export function BarChart({
     series: [
       {
         type: "bar",
-        data: displayValues.map((val) => ({
+        data: displayValues.map((val, idx) => ({
           value: val,
           itemStyle: {
             borderRadius: horizontal ? [0, 8, 8, 0] : [8, 8, 0, 0],
@@ -105,7 +112,12 @@ export function BarChart({
           fontSize: 11,
           fontWeight: 600,
         },
-        animationDelay: (_idx: number) => _idx * 50,
+        // 水平模式下，让柱子和坐标轴从底部向上依次出现
+        // 由于数组已反转，底部对应索引大的元素（TopN），顶部对应索引小的元素（Top1）
+        // 要让底部先出现（向上过渡），使用反向的索引顺序：索引大的延迟小，索引小的延迟大
+        animationDelay: horizontal 
+          ? (idx: number) => (totalBars - 1 - idx) * 50
+          : (_idx: number) => _idx * 50,
       },
     ],
   };

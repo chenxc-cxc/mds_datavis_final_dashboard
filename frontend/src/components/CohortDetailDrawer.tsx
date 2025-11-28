@@ -1,4 +1,4 @@
-import { Drawer, Spin, Statistic, Row, Col, Empty, Alert } from "antd";
+import { Drawer, Spin, Statistic, Row, Col, Empty, Alert, Tag } from "antd";
 import ReactECharts from "echarts-for-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCohortDetail } from "../api/endpoints";
@@ -24,6 +24,14 @@ const eventColors: Record<string, string> = {
   view: "#00d4ff",
   addtocart: "#ff006e",
   transaction: "#06ffa5",
+};
+
+// 用户类型配色方案
+const segmentTagColors: Record<string, string> = {
+  All: "blue",
+  Hesitant: "orange",
+  Impulsive: "magenta",
+  Collector: "purple",
 };
 
 export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateTo, onClose }: Props) {
@@ -252,17 +260,17 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
           {data.user_segment_distribution && Object.keys(data.user_segment_distribution).length > 0 && (
             <div className="glass rounded-2xl p-4 border border-glass-border">
               <div className="text-sm text-muted uppercase tracking-widest mb-4">用户细分分布</div>
-              <Row gutter={[16, 16]}>
-                {Object.entries(data.user_segment_distribution).map(([segment, count]) => (
-                  <Col span={6} key={segment}>
-                    <Statistic
-                      title={segment}
-                      value={count}
-                      valueStyle={{ color: "#00d4ff", fontSize: "18px" }}
-                    />
-                  </Col>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(data.user_segment_distribution).map(([seg, count]) => (
+                  <Tag
+                    key={seg}
+                    color={segmentTagColors[seg] || "default"}
+                    className="px-3 py-1 text-sm"
+                  >
+                    {seg}: {count.toLocaleString()}
+                  </Tag>
                 ))}
-              </Row>
+              </div>
             </div>
           )}
 
