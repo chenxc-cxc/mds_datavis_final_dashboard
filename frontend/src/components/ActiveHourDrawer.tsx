@@ -261,6 +261,29 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
             </div>
           )}
 
+          {/* 用户群体分布 */}
+          {data.user_segment_distribution &&
+            Object.keys(data.user_segment_distribution).length > 0 && (
+              <div className="glass rounded-2xl p-4 border border-glass-border">
+                <div className="text-sm text-muted uppercase tracking-widest mb-4">
+                  用户群体分布
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(data.user_segment_distribution).map(
+                    ([seg, count]) => (
+                      <Tag
+                        key={seg}
+                        color={seg === segment ? "blue" : "default"}
+                        className="px-3 py-1 text-sm"
+                      >
+                        {seg}: {count.toLocaleString()}
+                      </Tag>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+
           {/* 事件类型分布 */}
           {data.event_distribution &&
             Object.keys(data.event_distribution).length > 0 && (
@@ -290,6 +313,8 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
                 </Row>
               </div>
             )}
+
+            
 
           {/* 转化率 */}
           {data.conversion_rates && (
@@ -348,28 +373,6 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
             </div>
           )}
 
-          {/* 用户群体分布 */}
-          {data.user_segment_distribution &&
-            Object.keys(data.user_segment_distribution).length > 0 && (
-              <div className="glass rounded-2xl p-4 border border-glass-border">
-                <div className="text-sm text-muted uppercase tracking-widest mb-4">
-                  用户群体分布
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(data.user_segment_distribution).map(
-                    ([seg, count]) => (
-                      <Tag
-                        key={seg}
-                        color={seg === segment ? "blue" : "default"}
-                        className="px-3 py-1 text-sm"
-                      >
-                        {seg}: {count.toLocaleString()}
-                      </Tag>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
 
           {/* Top 商品 */}
           {data.top_items && data.top_items.length > 0 && (

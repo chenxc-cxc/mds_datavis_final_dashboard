@@ -248,6 +248,24 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
             </Row>
           </div>
 
+          {/* 用户细分分布 */}
+          {data.user_segment_distribution && Object.keys(data.user_segment_distribution).length > 0 && (
+            <div className="glass rounded-2xl p-4 border border-glass-border">
+              <div className="text-sm text-muted uppercase tracking-widest mb-4">用户细分分布</div>
+              <Row gutter={[16, 16]}>
+                {Object.entries(data.user_segment_distribution).map(([segment, count]) => (
+                  <Col span={6} key={segment}>
+                    <Statistic
+                      title={segment}
+                      value={count}
+                      valueStyle={{ color: "#00d4ff", fontSize: "18px" }}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          )}
+
           {/* 转化率卡片 */}
           {data.conversion_rates && (
             <div className="glass rounded-2xl p-4 border border-glass-border">
@@ -304,24 +322,6 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
             <div className="glass rounded-2xl p-4 border border-glass-border">
               <div className="text-sm text-muted uppercase tracking-widest mb-4">活跃时间段分布</div>
               <ReactECharts option={hourlyOption} style={{ height: 240 }} />
-            </div>
-          )}
-
-          {/* 用户细分分布 */}
-          {data.user_segment_distribution && Object.keys(data.user_segment_distribution).length > 0 && (
-            <div className="glass rounded-2xl p-4 border border-glass-border">
-              <div className="text-sm text-muted uppercase tracking-widest mb-4">用户细分分布</div>
-              <Row gutter={[16, 16]}>
-                {Object.entries(data.user_segment_distribution).map(([segment, count]) => (
-                  <Col span={6} key={segment}>
-                    <Statistic
-                      title={segment}
-                      value={count}
-                      valueStyle={{ color: "#00d4ff", fontSize: "18px" }}
-                    />
-                  </Col>
-                ))}
-              </Row>
             </div>
           )}
         </div>
