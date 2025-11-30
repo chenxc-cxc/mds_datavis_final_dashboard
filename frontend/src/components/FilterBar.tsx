@@ -1,4 +1,4 @@
-import { Segmented, Select, Slider, Space } from "antd";
+import { Segmented, Select, Slider, Space, Tooltip } from "antd";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import type { SegmentSummary, SegmentName, EventMetric } from "../api/types";
@@ -13,10 +13,11 @@ type Props = {
   segmentsSummary?: SegmentSummary[];
 };
 
+// 定义固定的指标顺序：浏览、加购、购买
 const metricOptions = [
-  { label: "购买量", value: "transaction" },
-  { label: "加购量", value: "addtocart" },
   { label: "浏览量", value: "view" },
+  { label: "加购量", value: "addtocart" },
+  { label: "购买量", value: "transaction" },
 ];
 
 const fallbackSegments: SegmentSummary[] = [
@@ -31,6 +32,14 @@ const segmentColors: Record<string, { bg: string; border: string; text: string }
   Hesitant: { bg: "bg-gradient-to-br from-warning to-warning-glow", border: "border-warning-glow", text: "text-white" },
   Impulsive: { bg: "bg-gradient-to-br from-accent to-accent-glow", border: "border-accent-glow", text: "text-white" },
   Collector: { bg: "bg-gradient-to-br from-secondary to-secondary-glow", border: "border-secondary-glow", text: "text-white" },
+};
+
+// 用户类型说明
+const segmentDescriptions: Record<string, string> = {
+  All: "所有用户群体的汇总数据",
+  Hesitant: "犹豫型用户：浏览较多但转化率较低，需要更多引导",
+  Impulsive: "冲动型用户：浏览后快速加购和购买，转化率高",
+  Collector: "收藏型用户：喜欢加购但购买决策周期较长",
 };
 
 export function FilterBar({
@@ -116,54 +125,67 @@ export function FilterBar({
           {(segmentsSummary?.length ? segmentsSummary : fallbackSegments).slice(0, 4).map((seg, idx) => {
             const isActive = seg.segment === segment;
             const colors = segmentColors[seg.segment] || segmentColors.All;
+            const description = segmentDescriptions[seg.segment] || "用户群体";
             return (
-              <motion.div
+              <Tooltip
                 key={seg.segment}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: idx * 0.1 }}
-                whileHover={{ scale: 1.05, y: -4 }}
-                whileTap={{ scale: 0.95 }}
-                className={`rounded-2xl p-4 cursor-pointer relative overflow-hidden ${
-                  isActive
-                    ? `${colors.bg} ${colors.border} border-2 shadow-glow`
-                    : "glass border border-glass-border hover:border-primary-glow"
-                }`}
-                onClick={() => onSegmentChange(seg.segment as SegmentName)}
+                title={description}
+                placement="top"
+                overlayStyle={{ maxWidth: "250px" }}
+                overlayInnerStyle={{
+                  background: "rgba(26, 31, 58, 0.95)",
+                  border: "1px solid rgba(0, 212, 255, 0.3)",
+                  borderRadius: "8px",
+                  padding: "12px",
+                }}
               >
-                {/* 点击波纹效果 */}
                 <motion.div
-                  className="absolute inset-0 bg-white opacity-0"
-                  whileTap={{
-                    opacity: [0, 0.3, 0],
-                    scale: [0.8, 1.2, 1],
-                  }}
-                  transition={{ duration: 0.6 }}
-                />
-                <div className="relative z-10">
-                  <div>
-                    <div className={isActive ? "text-white/80 text-xs mb-1" : "text-muted text-xs mb-1"}>
-                      {seg.segment}
-                    </div>
-                    <div
-                      style={{
-                        color: isActive ? "#fff" : "#3b82f6",
-                        fontSize: "24px",
-                        fontWeight: 700,
-                        textShadow: isActive ? "0 0 10px rgba(255,255,255,0.5)" : "none",
-                      }}
-                    >
-                      <CountUp
-                        end={seg.user_count}
-                        duration={1.5}
-                        separator=","
-                        decimals={0}
-                        useEasing={true}
-                      />
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -4 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`rounded-2xl p-4 cursor-pointer relative overflow-hidden ${
+                    isActive
+                      ? `${colors.bg} ${colors.border} border-2 shadow-glow`
+                      : "glass border border-glass-border hover:border-primary-glow"
+                  }`}
+                  onClick={() => onSegmentChange(seg.segment as SegmentName)}
+                >
+                  {/* 点击波纹效果 */}
+                  <motion.div
+                    className="absolute inset-0 bg-white opacity-0"
+                    whileTap={{
+                      opacity: [0, 0.3, 0],
+                      scale: [0.8, 1.2, 1],
+                    }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <div className="relative z-10">
+                    <div>
+                      <div className={isActive ? "text-white/80 text-xs mb-1" : "text-muted text-xs mb-1"}>
+                        {seg.segment}
+                      </div>
+                      <div
+                        style={{
+                          color: isActive ? "#fff" : "#3b82f6",
+                          fontSize: "24px",
+                          fontWeight: 700,
+                          textShadow: isActive ? "0 0 10px rgba(255,255,255,0.5)" : "none",
+                        }}
+                      >
+                        <CountUp
+                          end={seg.user_count}
+                          duration={1.5}
+                          separator=","
+                          decimals={0}
+                          useEasing={true}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Tooltip>
             );
           })}
         </div>
