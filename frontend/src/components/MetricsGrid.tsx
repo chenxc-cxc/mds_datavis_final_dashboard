@@ -29,8 +29,14 @@ const metricConfig: Record<string, { color: string; gradient: string; icon: stri
   },
 };
 
+// 定义固定的指标顺序：浏览、加购、购买
+const metricOrder: string[] = ["view", "addtocart", "transaction"];
+
 export function MetricsGrid({ metrics }: Props) {
-  const entries = Object.entries(metrics ?? {});
+  // 按照固定顺序获取指标数据
+  const entries = metricOrder
+    .filter((key) => metrics?.[key] !== undefined)
+    .map((key) => [key, metrics[key]] as [string, number]);
   const total = entries.reduce((acc, [, v]) => acc + v, 0) || 1;
 
   return (

@@ -59,5 +59,5 @@ def cache_key(prefix: str, **kwargs: Any) -> str:
 def _disable_cache() -> None:
     global _redis, _redis_available
     _redis = None
-    _redis_available = False
+    _redis_available = False # 禁用 Redis 缓存
 
