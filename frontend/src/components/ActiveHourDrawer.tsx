@@ -27,6 +27,9 @@ const eventColors: Record<string, string> = {
   transaction: "#06ffa5",
 };
 
+// 定义固定的用户群体顺序：All, Hesitant, Impulsive, Collector
+const segmentOrder: string[] = ["All", "Hesitant", "Impulsive", "Collector"];
+
 // 定义固定的指标顺序：浏览、加购、购买
 const eventOrder: string[] = ["view", "addtocart", "transaction"];
 
@@ -265,15 +268,15 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
           )}
 
           {/* 用户群体分布 */}
-          {data.user_segment_distribution &&
-            Object.keys(data.user_segment_distribution).length > 0 && (
+          {data.user_segment_distribution && (
               <div className="glass rounded-2xl p-4 border border-glass-border">
                 <div className="text-sm text-muted uppercase tracking-widest mb-4">
                   用户群体分布
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {Object.entries(data.user_segment_distribution).map(
-                    ([seg, count]) => (
+                  {segmentOrder.map((seg) => {
+                    const count = data.user_segment_distribution[seg] || 0;
+                    return (
                       <Tag
                         key={seg}
                         color={seg === segment ? "blue" : "default"}
@@ -281,8 +284,8 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
                       >
                         {seg}: {count.toLocaleString()}
                       </Tag>
-                    )
-                  )}
+                    );
+                  })}
                 </div>
               </div>
             )}

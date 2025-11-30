@@ -21,13 +21,8 @@ const eventLabels: Record<string, string> = {
   transaction: "购买",
 };
 
-// 用户类型配色方案
-const segmentTagColors: Record<string, string> = {
-  All: "blue",
-  Hesitant: "orange",
-  Impulsive: "magenta",
-  Collector: "purple",
-};
+// 定义固定的用户群体顺序：All, Hesitant, Impulsive, Collector
+const segmentOrder: string[] = ["All", "Hesitant", "Impulsive", "Collector"];
 
 export function WeekdayDetailDrawer({ open, weekday, segment, dateFrom, dateTo, onClose }: Props) {
   const { data, isLoading, error } = useQuery({
@@ -249,26 +244,26 @@ export function WeekdayDetailDrawer({ open, weekday, segment, dateFrom, dateTo, 
           </div>
 
             {/* 用户群体分布 */}
-            {data.user_segment_distribution &&
-            Object.keys(data.user_segment_distribution).length > 0 && (
+            {data.user_segment_distribution && (
                 <div className="glass rounded-2xl p-4 border border-glass-border">
                 <div className="text-sm text-muted uppercase tracking-widest mb-4">
                     用户群体分布
                 </div>
                 <div className="flex flex-wrap gap-2">
-                    {Object.entries(data.user_segment_distribution).map(
-                    ([seg, count]) => (
+                    {segmentOrder.map((seg) => {
+                    const count = data.user_segment_distribution[seg] || 0;
+                    return (
                         <Tag
                         key={seg}
-                        color={segmentTagColors[seg] || "default"}
+                        color={seg === segment ? "blue" : "default"}
                         className="px-3 py-1 text-sm"
                         >
                         {seg}: {count.toLocaleString()}
                         </Tag>
-                    )
-                    )}
+                    );
+                    })}
                 </div>
-                </div>
+            </div>
             )}
 
           {/* 事件类型分布 */}
