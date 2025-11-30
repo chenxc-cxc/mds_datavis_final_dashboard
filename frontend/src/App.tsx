@@ -19,6 +19,7 @@ import { ChartCard } from "./components/ChartCard";
 import { BarChart } from "./components/charts/BarChart";
 import { FunnelChart } from "./components/charts/FunnelChart";
 import { CUHKSZIcon } from "./components/CUHKSZIcon";
+import { CUHKSZBackground } from "./components/CUHKSZBackground";
 import { LineChart } from "./components/charts/LineChart";
 import { RetentionChart } from "./components/charts/RetentionChart";
 import { WeekdayUserChart } from "./components/charts/WeekdayUserChart";
@@ -140,6 +141,7 @@ function App() {
   return (
     <Layout className="min-h-screen bg-transparent relative">
       <ParticlesBackground />
+      <CUHKSZBackground />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
