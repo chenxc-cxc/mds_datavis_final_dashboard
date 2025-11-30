@@ -140,6 +140,42 @@ export interface WeekdayUsersResponse {
   weekend_avg: number; // 周末（周六、周日）的平均用户数
 }
 
+export interface WeekdayDetailPayload {
+  weekday: number; // 星期几（1=周一，2=周二，...7=周日）
+  weekday_name: string; // 星期几名称
+  segment: SegmentName;
+  total_count: number; // 该星期几的事件总数
+  user_count: number; // 该星期几的用户数
+  percentage_of_week: number; // 占一周的百分比
+  event_distribution: Record<string, number>; // 事件类型分布
+  conversion_rates: ConversionRates; // 转化率
+  funnel: FunnelStage[]; // 转化漏斗
+  hourly_distribution: HourlyDistribution[]; // 24小时活跃时间段分布
+  time_series: DrilldownSeries[]; // 周度趋势
+  top_items: TopEntity[]; // Top 商品
+  top_categories: TopEntity[]; // Top 类别
+  user_segment_distribution: Record<string, number>; // 用户细分群体分布
+  comparison: {
+    weekday_avg: {
+      count: number;
+      diff: number;
+      diff_percentage: number;
+    };
+    weekend_avg: {
+      count: number;
+      diff: number;
+      diff_percentage: number;
+    };
+    week_avg: {
+      count: number;
+      diff: number;
+      diff_percentage: number;
+    };
+    is_above_weekday_avg: boolean;
+    is_above_weekend_avg: boolean;
+  };
+}
+
 export interface CohortDetailPayload {
   cohort_month: string; // Cohort月份（如 '2024-01'）
   cohort_size: number; // Cohort的总用户数

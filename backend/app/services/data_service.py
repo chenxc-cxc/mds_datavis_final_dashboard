@@ -1110,6 +1110,245 @@ class DataService:
             "user_segment_distribution": user_segment_distribution,
         }
 
+    def get_weekday_detail(
+        self,
+        weekday: int,
+        segment: str,
+        top_n: int = 10,
+        date_from: str | None = None,
+        date_to: str | None = None,
+    ) -> dict[str, Any]:
+        """获取指定星期几的详细分析数据
+        
+        Args:
+            weekday: 星期几（1=周一，2=周二，...7=周日）
+            segment: 用户群体
+            top_n: Top N 数量
+            date_from: 开始日期
+            date_to: 结束日期
+        """
+        if weekday < 1 or weekday > 7:
+            raise ValueError("weekday must be between 1 and 7")
+        
+        # 构建基础查询：筛选指定星期几的数据
+        # DuckDB 的 EXTRACT(DOW FROM timestamp) 返回：0=周日，1=周一，...6=周六
+        # 我们需要转换为：1=周一，2=周二，...7=周日
+        query_base = f"""
+        WITH filtered AS (
+            {self._filtered_events(segment, date_from, date_to)}
+        ),
+        weekday_normalized AS (
+            SELECT *,
+                CASE 
+                    WHEN EXTRACT(DOW FROM timestamp) = 0 THEN 7  -- 周日 -> 7
+                    ELSE EXTRACT(DOW FROM timestamp)::INTEGER  -- 周一(1)到周六(6)
+                END AS weekday
+            FROM filtered
+        )
+        SELECT *
+        FROM weekday_normalized
+        WHERE weekday = {weekday}
+        """
+        
+        # 基础统计（事件总数）
+        count_query = f"SELECT COUNT(*) FROM ({query_base})"
+        total_count = int(self.con.execute(count_query).fetchone()[0])
+        
+        # 获取当前星期几的用户数和一周统计数据
+        weekday_users = self.get_weekday_users(segment, date_from, date_to)
+        current_weekday_data = next((item for item in weekday_users["data"] if item["weekday"] == weekday), None)
+        current_weekday_user_count = current_weekday_data["user_count"] if current_weekday_data else 0
+        
+        # 计算一周平均用户数（7天的平均值）
+        week_avg_users = sum(item["user_count"] for item in weekday_users["data"]) / 7 if weekday_users["data"] else 0
+        
+        # 计算该星期几的用户数占一周平均用户数的百分比
+        percentage_of_week = round((current_weekday_user_count * 100 / week_avg_users) if week_avg_users > 0 else 0, 2)
+        
+        # 事件类型分布
+        event_query = f"""
+        SELECT event, COUNT(*) AS value
+        FROM ({query_base})
+        GROUP BY event
+        """
+        event_rows = self.con.execute(event_query).fetchall()
+        event_distribution = {row[0]: int(row[1]) for row in event_rows}
+        
+        # 计算转化率
+        view_count = event_distribution.get("view", 0)
+        cart_count = event_distribution.get("addtocart", 0)
+        purchase_count = event_distribution.get("transaction", 0)
+        
+        conversion_rates = {
+            "view_to_cart": round((cart_count / view_count * 100) if view_count > 0 else 0, 2),
+            "cart_to_purchase": round((purchase_count / cart_count * 100) if cart_count > 0 else 0, 2),
+            "view_to_purchase": round((purchase_count / view_count * 100) if view_count > 0 else 0, 2),
+        }
+        
+        # 转化漏斗
+        funnel_stages = [
+            {"stage": "浏览", "count": view_count, "percentage": 100.0},
+            {"stage": "加购", "count": cart_count, "percentage": conversion_rates["view_to_cart"]},
+            {"stage": "购买", "count": purchase_count, "percentage": conversion_rates["view_to_purchase"]},
+        ]
+        
+        # 24小时分布（该星期几的活跃时间段）
+        hourly_query = f"""
+        SELECT
+            EXTRACT(HOUR FROM timestamp) AS hour,
+            COUNT(DISTINCT visitorid) AS user_count
+        FROM ({query_base})
+        GROUP BY hour
+        ORDER BY hour
+        """
+        hourly_rows = self.con.execute(hourly_query).fetchall()
+        hourly_distribution = [{"hour": int(row[0]), "count": int(row[1])} for row in hourly_rows]
+        
+        # 时间序列数据（周度趋势）
+        series_query = f"""
+        SELECT
+            date_trunc('week', timestamp) AS period,
+            COUNT(*) AS value
+        FROM ({query_base})
+        GROUP BY period
+        ORDER BY period
+        """
+        series_rows = self.con.execute(series_query).fetchall()
+        time_series = [
+            {"label": "活动量", "data": [{"period": str(row[0]), "value": int(row[1])} for row in series_rows]}
+        ]
+        
+        # Top 商品
+        top_items_query = f"""
+        SELECT
+            itemid AS entity_id,
+            COUNT(*) AS value
+        FROM ({query_base})
+        GROUP BY itemid
+        ORDER BY value DESC
+        LIMIT {top_n}
+        """
+        top_items_rows = self.con.execute(top_items_query).fetchall()
+        top_items = [
+            {
+                "entity_id": int(row[0]),
+                "label": f"Item {int(row[0])}",
+                "metric": "view",
+                "value": int(row[1]),
+            }
+            for row in top_items_rows
+        ]
+        
+        # Top 类别
+        top_categories_query = f"""
+        SELECT
+            categoryid AS entity_id,
+            COUNT(*) AS value
+        FROM ({query_base})
+        GROUP BY categoryid
+        ORDER BY value DESC
+        LIMIT {top_n}
+        """
+        top_categories_rows = self.con.execute(top_categories_query).fetchall()
+        top_categories = [
+            {
+                "entity_id": int(row[0]),
+                "label": f"Category {int(row[0])}",
+                "metric": "view",
+                "value": int(row[1]),
+            }
+            for row in top_categories_rows
+        ]
+        
+        # 用户群体分布
+        user_segment_query = f"""
+        WITH filtered AS (
+            {self._filtered_events(segment, date_from, date_to)}
+        ),
+        weekday_normalized AS (
+            SELECT *,
+                CASE 
+                    WHEN EXTRACT(DOW FROM timestamp) = 0 THEN 7
+                    ELSE EXTRACT(DOW FROM timestamp)::INTEGER
+                END AS weekday
+            FROM filtered
+        ),
+        weekday_events AS (
+            SELECT DISTINCT visitorid
+            FROM weekday_normalized
+            WHERE weekday = {weekday}
+        )
+        SELECT
+            s.segment,
+            COUNT(DISTINCT we.visitorid) AS count
+        FROM weekday_events we
+        JOIN user_segments s ON we.visitorid = s.visitorid
+        GROUP BY s.segment
+        """
+        user_segment_rows = self.con.execute(user_segment_query).fetchall()
+        user_segment_distribution = {row[0]: int(row[1]) for row in user_segment_rows}
+        
+        # 对比分析：与工作日平均、周末平均、一周平均对比
+        weekday_avg = weekday_users.get("weekday_avg", 0)
+        weekend_avg = weekday_users.get("weekend_avg", 0)
+        # 一周平均用户数（7天的平均值）
+        week_avg_users = sum(item["user_count"] for item in weekday_users["data"]) / 7 if weekday_users["data"] else 0
+        
+        is_weekday = 1 <= weekday <= 5
+        relevant_avg = weekday_avg if is_weekday else weekend_avg
+        
+        comparison = {
+            "weekday_avg": {
+                "count": weekday_avg,
+                "diff": current_weekday_user_count - weekday_avg,
+                "diff_percentage": round(
+                    ((current_weekday_user_count - weekday_avg) * 100 / weekday_avg)
+                    if weekday_avg > 0 else 0,
+                    2
+                ),
+            },
+            "weekend_avg": {
+                "count": weekend_avg,
+                "diff": current_weekday_user_count - weekend_avg,
+                "diff_percentage": round(
+                    ((current_weekday_user_count - weekend_avg) * 100 / weekend_avg)
+                    if weekend_avg > 0 else 0,
+                    2
+                ),
+            },
+            "week_avg": {
+                "count": round(week_avg_users, 2),
+                "diff": current_weekday_user_count - week_avg_users,
+                "diff_percentage": round(
+                    ((current_weekday_user_count - week_avg_users) * 100 / week_avg_users)
+                    if week_avg_users > 0 else 0,
+                    2
+                ),
+            },
+            "is_above_weekday_avg": current_weekday_user_count > weekday_avg if is_weekday else False,
+            "is_above_weekend_avg": current_weekday_user_count > weekend_avg if not is_weekday else False,
+        }
+        
+        weekday_names = ["", "周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        
+        return {
+            "weekday": weekday,
+            "weekday_name": weekday_names[weekday],
+            "segment": segment,
+            "total_count": total_count,
+            "user_count": current_weekday_user_count,
+            "percentage_of_week": percentage_of_week,
+            "event_distribution": event_distribution,
+            "conversion_rates": conversion_rates,
+            "funnel": funnel_stages,
+            "hourly_distribution": hourly_distribution,
+            "time_series": time_series,
+            "top_items": top_items,
+            "top_categories": top_categories,
+            "user_segment_distribution": user_segment_distribution,
+            "comparison": comparison,
+        }
+
 
 @lru_cache
 def get_data_service() -> DataService:

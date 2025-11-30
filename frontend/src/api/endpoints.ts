@@ -12,6 +12,7 @@ import type {
   SegmentName,
   SegmentSummary,
   TopEntity,
+  WeekdayDetailPayload,
   WeekdayUsersResponse,
 } from "./types";
 
@@ -150,6 +151,19 @@ export const fetchCohortDetail = async (
 ) => {
   const { data } = await api.get<CohortDetailPayload>(`/cohort-detail/${cohortMonth}`, {
     params: { segment, date_from, date_to },
+  });
+  return data;
+};
+
+export const fetchWeekdayDetail = async (
+  weekday: number,
+  segment: SegmentName,
+  topN: number = 10,
+  date_from?: string | null,
+  date_to?: string | null
+) => {
+  const { data } = await api.get<WeekdayDetailPayload>(`/weekday-detail/${weekday}`, {
+    params: { segment, top_n: topN, date_from, date_to },
   });
   return data;
 };

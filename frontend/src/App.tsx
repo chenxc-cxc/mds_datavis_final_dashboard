@@ -26,6 +26,7 @@ import { DrilldownDrawer } from "./components/DrilldownDrawer";
 import { FunnelStageDrawer } from "./components/FunnelStageDrawer";
 import { ActiveHourDrawer } from "./components/ActiveHourDrawer";
 import { CohortDetailDrawer } from "./components/CohortDetailDrawer";
+import { WeekdayDetailDrawer } from "./components/WeekdayDetailDrawer";
 import { DraggableGrid } from "./components/DraggableGrid";
 import { ParticlesBackground } from "./components/ParticlesBackground";
 import { DateRangePicker } from "./components/DateRangePicker";
@@ -42,6 +43,7 @@ function App() {
   const [funnelStage, setFunnelStage] = useState<"view" | "addtocart" | "transaction" | null>(null);
   const [activeHour, setActiveHour] = useState<number | null>(null);
   const [cohortMonth, setCohortMonth] = useState<string | null>(null);
+  const [selectedWeekday, setSelectedWeekday] = useState<number | null>(null);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
 
   const queryClient = useQueryClient();
@@ -301,7 +303,7 @@ function App() {
           </ChartCard>
           <ChartCard
             title="周一到周日用户数"
-            subtitle="展示每周各天的用户数分布，含工作日和周末平均线"
+            subtitle="点击柱状图查看该天的详细分析"
             glowColor="success"
             chartId="weekday-users-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["weekday-users"] })}
@@ -310,7 +312,10 @@ function App() {
             {loadingWeekdayUsers ? (
               <Spin size="large" />
             ) : (
-              <WeekdayUserChart data={weekdayUsers || null} />
+              <WeekdayUserChart 
+                data={weekdayUsers || null}
+                onWeekdayClick={(weekday) => setSelectedWeekday(weekday)}
+              />
             )}
           </ChartCard>
         </DraggableGrid>
@@ -352,6 +357,15 @@ function App() {
         dateFrom={dateFrom}
         dateTo={dateTo}
         onClose={() => setCohortMonth(null)}
+      />
+
+      <WeekdayDetailDrawer
+        open={selectedWeekday !== null}
+        weekday={selectedWeekday}
+        segment={segment}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onClose={() => setSelectedWeekday(null)}
       />
     </Layout>
   );

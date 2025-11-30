@@ -5,9 +5,10 @@ import type { WeekdayUsersResponse } from "../../api/types";
 
 type WeekdayUserChartProps = {
   data: WeekdayUsersResponse | null;
+  onWeekdayClick?: (weekday: number) => void;
 };
 
-export function WeekdayUserChart({ data }: WeekdayUserChartProps) {
+export function WeekdayUserChart({ data, onWeekdayClick }: WeekdayUserChartProps) {
   const chartRef = useRef<ECharts | null>(null);
 
   // Setup resize observer for responsive charts
@@ -108,7 +109,7 @@ export function WeekdayUserChart({ data }: WeekdayUserChartProps) {
       {
         name: "用户数",
         type: "bar" as const,
-        data: values.map((val) => ({
+        data: values.map((val, idx) => ({
           value: val,
           itemStyle: {
             borderRadius: [8, 8, 0, 0],
@@ -126,6 +127,8 @@ export function WeekdayUserChart({ data }: WeekdayUserChartProps) {
             shadowBlur: 10,
             shadowColor: "rgba(59, 130, 246, 0.3)",
           },
+          // 添加星期几信息用于点击事件
+          weekday: data?.data[idx]?.weekday || idx + 1,
         })),
         emphasis: {
           itemStyle: {
@@ -213,6 +216,23 @@ export function WeekdayUserChart({ data }: WeekdayUserChartProps) {
               resizeObserver.observe(dom.parentElement);
             }
           }}
+          onEvents={
+            onWeekdayClick && data?.data
+              ? {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  click: (params: any) => {
+                    // 从 data 数组中获取对应的 weekday
+                    const dataIndex = params.dataIndex as number;
+                    if (data.data && data.data[dataIndex]) {
+                      const weekday = data.data[dataIndex].weekday;
+                      if (weekday >= 1 && weekday <= 7) {
+                        onWeekdayClick(weekday);
+                      }
+                    }
+                  },
+                }
+              : undefined
+          }
         />
       </div>
       {/* 图例说明 */}

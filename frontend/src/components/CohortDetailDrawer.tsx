@@ -256,10 +256,10 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
             </Row>
           </div>
 
-          {/* 用户细分分布 */}
+          {/* 用户群体分布 */}
           {data.user_segment_distribution && Object.keys(data.user_segment_distribution).length > 0 && (
             <div className="glass rounded-2xl p-4 border border-glass-border">
-              <div className="text-sm text-muted uppercase tracking-widest mb-4">用户细分分布</div>
+              <div className="text-sm text-muted uppercase tracking-widest mb-4">用户群体分布</div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(data.user_segment_distribution).map(([seg, count]) => (
                   <Tag

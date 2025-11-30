@@ -167,31 +167,31 @@ export function BarChart({
 
   return (
     <div style={{ width: "100%", height: "100%", minHeight: "300px" }}>
-      <ReactECharts
-        option={option}
+    <ReactECharts
+      option={option}
         style={{ width: "100%", height: "90%" }}
         onChartReady={(chart) => {
           chartRef.current = chart;
           setupResizeObserver(chart);
         }}
-        onEvents={
-          onBarClick
-            ? {
-                click: (params: { name: string; value: number; dataIndex: number }) => {
+      onEvents={
+        onBarClick
+          ? {
+              click: (params: { name: string; value: number; dataIndex: number }) => {
                   // 如果水平模式下反转了数组，需要计算原始索引
                   const originalIndex = horizontal 
                     ? displayCategories.length - 1 - (params.dataIndex as number)
                     : (params.dataIndex as number);
-                  onBarClick({
-                    name: params.name as string,
-                    value: params.value as number,
+                onBarClick({
+                  name: params.name as string,
+                  value: params.value as number,
                     index: originalIndex,
-                  });
-                },
-              }
-            : undefined
-        }
-      />
+                });
+              },
+            }
+          : undefined
+      }
+    />
     </div>
   );
 }

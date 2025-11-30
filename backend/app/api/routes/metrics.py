@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Query
 
 from app.core.config import get_settings
-from app.models.schemas import ActiveHourDetailResponse, CohortDetailResponse, DrilldownResponse, EventMetric, FunnelStageDetailResponse, MonthlyRetentionPoint, SegmentName, TopEntity, WeekdayUsersResponse
+from app.models.schemas import ActiveHourDetailResponse, CohortDetailResponse, DrilldownResponse, EventMetric, FunnelStageDetailResponse, MonthlyRetentionPoint, SegmentName, TopEntity, WeekdayDetailResponse, WeekdayUsersResponse
 from app.services.cache import cache_get, cache_key, cache_set
 from app.services.data_service import get_data_service
 
@@ -214,5 +214,32 @@ async def cohort_detail(
         return data
     except ValueError as e:
         from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/weekday-detail/{weekday}", response_model=WeekdayDetailResponse)
+async def weekday_detail(
+    weekday: int,
+    segment: SegmentName = Query("All"),
+    top_n: int = Query(10, ge=5, le=20),
+    date_from: str | None = Query(None),
+    date_to: str | None = Query(None),
+):
+    """获取指定星期几的详细分析数据
+    
+    Args:
+        weekday: 星期几（1=周一，2=周二，...7=周日）
+    """
+    if weekday < 1 or weekday > 7:
+        raise HTTPException(status_code=400, detail="weekday must be between 1 and 7")
+    key = cache_key("weekday-detail", weekday=weekday, segment=segment, top_n=top_n, date_from=date_from, date_to=date_to)
+    cached = await cache_get(key)
+    if cached:
+        return cached
+    try:
+        data = service.get_weekday_detail(weekday, segment, top_n, date_from, date_to)
+        await cache_set(key, data)
+        return data
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

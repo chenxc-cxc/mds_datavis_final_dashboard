@@ -109,6 +109,24 @@ class WeekdayUsersResponse(BaseModel):
     weekend_avg: float  # 周末（周六、周日）的平均用户数
 
 
+class WeekdayDetailResponse(BaseModel):
+    weekday: int  # 星期几（1=周一，2=周二，...7=周日）
+    weekday_name: str  # 星期几名称
+    segment: SegmentName
+    total_count: int  # 该星期几的事件总数
+    user_count: int  # 该星期几的用户数
+    percentage_of_week: float  # 占一周的百分比
+    event_distribution: dict[str, int]  # 事件类型分布
+    conversion_rates: ConversionRates  # 转化率
+    funnel: List[FunnelStage]  # 转化漏斗
+    hourly_distribution: List[HourlyDistribution]  # 24小时活跃时间段分布
+    time_series: List[DrilldownSeries]  # 周度趋势
+    top_items: List[TopEntity]  # Top 商品
+    top_categories: List[TopEntity]  # Top 类别
+    user_segment_distribution: dict[str, int]  # 用户细分群体分布
+    comparison: dict[str, Any]  # 与工作日平均、周末平均、一周平均的对比
+
+
 class CohortDetailResponse(BaseModel):
     cohort_month: str  # Cohort月份（如 '2024-01'）
     cohort_size: int  # Cohort的总用户数

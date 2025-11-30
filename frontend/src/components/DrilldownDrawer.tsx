@@ -195,9 +195,9 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
         <Empty description="暂无数据" />
       ) : (
         <div className="space-y-6">
-          {/* 概览统计卡片 */}
+          {/* 事件统计卡片 */}
           <div className="glass rounded-2xl p-4 border border-glass-border">
-            <div className="text-sm text-muted uppercase tracking-widest mb-4">数据概览</div>
+            <div className="text-sm text-muted uppercase tracking-widest mb-4">事件概览</div>
             <Row gutter={[16, 16]}>
               {Object.entries(data.summary).map(([key, value]) => (
                 <Col span={8} key={key}>
@@ -256,7 +256,7 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
             <div className="glass rounded-2xl p-4 border border-glass-border">
               <div className="text-sm text-muted uppercase tracking-widest mb-4">转化漏斗</div>
               <div style={{ height: "280px", width: "100%" }}>
-                <FunnelChart data={data.funnel} />
+              <FunnelChart data={data.funnel} />
               </div>
             </div>
           )}
