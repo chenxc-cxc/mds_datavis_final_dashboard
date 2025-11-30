@@ -12,9 +12,9 @@ type DateRangePickerProps = {
 
 // 数据集时间范围：2015年5月到9月
 const quickRanges: Record<string, [Dayjs, Dayjs]> = {
-  全部: [dayjs("2015-05-01").startOf("day"), dayjs("2015-09-30").endOf("day")],
-  "5-7月": [dayjs("2015-05-01").startOf("day"), dayjs("2015-07-31").endOf("day")],
-  "6-9月": [dayjs("2015-06-01").startOf("day"), dayjs("2015-09-30").endOf("day")],
+  数据集全部: [dayjs("2015-05-01").startOf("day"), dayjs("2015-09-30").endOf("day")],
+  "2015年5-7月": [dayjs("2015-05-01").startOf("day"), dayjs("2015-07-31").endOf("day")],
+  "2015年6-9月": [dayjs("2015-06-01").startOf("day"), dayjs("2015-09-30").endOf("day")],
   最近三个月: [dayjs().subtract(3, "month").startOf("month"), dayjs().endOf("month")],
 };
 
@@ -48,16 +48,16 @@ export function DateRangePicker({ value, onChange, onQuickSelect }: DateRangePic
           }}
           presets={[
             {
-              label: "全部",
-              value: quickRanges.全部,
+              label: "数据集全部",
+              value: quickRanges.数据集全部,
             },
             {
-              label: "5-7月",
-              value: quickRanges["5-7月"],
+              label: "2015年5-7月",
+              value: quickRanges["2015年5-7月"],
             },
             {
-              label: "6-9月",
-              value: quickRanges["6-9月"],
+              label: "2015年6-9月",
+              value: quickRanges["2015年6-9月"],
             },
             {
               label: "最近三个月",
