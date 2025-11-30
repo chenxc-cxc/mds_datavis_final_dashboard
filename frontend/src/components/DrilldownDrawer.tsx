@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchDrilldown } from "../api/endpoints";
 import type { SegmentName } from "../api/types";
 import { FunnelChart } from "./charts/FunnelChart";
+import { useResizableDrawer } from "../hooks/useResizableDrawer";
 
 type Props = {
   open: boolean;
@@ -31,6 +32,8 @@ const eventColors: Record<string, string> = {
 const eventOrder: string[] = ["view", "addtocart", "transaction"];
 
 export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom, dateTo, onClose }: Props) {
+  const { width, ResizeHandle } = useResizableDrawer({ defaultWidth: 600, minWidth: 400, maxWidth: 1200 });
+  
   const { data, isLoading, error } = useQuery({
     queryKey: ["drilldown", entityType, entityId, segment, dateFrom, dateTo],
     queryFn: () => fetchDrilldown(entityType!, entityId!, segment, dateFrom, dateTo),
@@ -173,11 +176,12 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
           <div className="text-muted text-xs mt-1">用户群体: {segment}</div>
         </div>
       }
-      width={600}
+      width={width}
       styles={{
         body: {
           padding: "24px",
           background: "linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)",
+          position: "relative",
         },
         header: {
           background: "rgba(26, 31, 58, 0.7)",
@@ -186,6 +190,7 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
       }}
       className="glass"
     >
+      <ResizeHandle />
       {isLoading ? (
         <div className="flex justify-center items-center h-96">
           <Spin size="large" />

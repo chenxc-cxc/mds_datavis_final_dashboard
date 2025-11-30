@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchFunnelStageDetail } from "../api/endpoints";
 import type { SegmentName } from "../api/types";
 import { BarChart } from "./charts/BarChart";
+import { useResizableDrawer } from "../hooks/useResizableDrawer";
 
 type Props = {
   open: boolean;
@@ -30,6 +31,8 @@ const stageColors: Record<string, string> = {
 const segmentOrder: string[] = ["All", "Hesitant", "Impulsive", "Collector"];
 
 export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onClose }: Props) {
+  const { width, ResizeHandle } = useResizableDrawer({ defaultWidth: 700, minWidth: 400, maxWidth: 1200 });
+  
   const { data, isLoading, error } = useQuery({
     queryKey: ["funnel-stage", stage, segment, dateFrom, dateTo],
     queryFn: () => fetchFunnelStageDetail(stage!, segment, 10, dateFrom, dateTo),
@@ -186,11 +189,12 @@ export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onCl
           >用户群体: {segment}</div>
         </div>
       }
-      width={700}
+      width={width}
       styles={{
         body: {
           padding: "24px",
           background: "linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%)",
+          position: "relative",
         },
         header: {
           background: "rgba(26, 31, 58, 0.7)",
@@ -199,6 +203,7 @@ export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onCl
       }}
       className="glass"
     >
+      <ResizeHandle />
       {isLoading ? (
         <div className="flex justify-center items-center h-96">
           <Spin size="large" />
