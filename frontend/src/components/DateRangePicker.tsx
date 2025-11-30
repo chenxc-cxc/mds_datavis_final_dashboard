@@ -10,13 +10,12 @@ type DateRangePickerProps = {
   onQuickSelect?: (range: string) => void;
 };
 
+// 数据集时间范围：2015年5月到9月
 const quickRanges: Record<string, [Dayjs, Dayjs]> = {
-  今天: [dayjs().startOf("day"), dayjs().endOf("day")],
-  昨天: [dayjs().subtract(1, "day").startOf("day"), dayjs().subtract(1, "day").endOf("day")],
-  最近7天: [dayjs().subtract(6, "day").startOf("day"), dayjs().endOf("day")],
-  最近30天: [dayjs().subtract(29, "day").startOf("day"), dayjs().endOf("day")],
-  本月: [dayjs().startOf("month"), dayjs().endOf("month")],
-  上月: [dayjs().subtract(1, "month").startOf("month"), dayjs().subtract(1, "month").endOf("month")],
+  全部: [dayjs("2015-05-01").startOf("day"), dayjs("2015-09-30").endOf("day")],
+  "5-7月": [dayjs("2015-05-01").startOf("day"), dayjs("2015-07-31").endOf("day")],
+  "6-9月": [dayjs("2015-06-01").startOf("day"), dayjs("2015-09-30").endOf("day")],
+  最近三个月: [dayjs().subtract(3, "month").startOf("month"), dayjs().endOf("month")],
 };
 
 export function DateRangePicker({ value, onChange, onQuickSelect }: DateRangePickerProps) {
@@ -49,28 +48,20 @@ export function DateRangePicker({ value, onChange, onQuickSelect }: DateRangePic
           }}
           presets={[
             {
-              label: "今天",
-              value: quickRanges.今天,
+              label: "全部",
+              value: quickRanges.全部,
             },
             {
-              label: "昨天",
-              value: quickRanges.昨天,
+              label: "5-7月",
+              value: quickRanges["5-7月"],
             },
             {
-              label: "最近7天",
-              value: quickRanges.最近7天,
+              label: "6-9月",
+              value: quickRanges["6-9月"],
             },
             {
-              label: "最近30天",
-              value: quickRanges.最近30天,
-            },
-            {
-              label: "本月",
-              value: quickRanges.本月,
-            },
-            {
-              label: "上月",
-              value: quickRanges.上月,
+              label: "最近三个月",
+              value: quickRanges.最近三个月,
             },
           ]}
         />
