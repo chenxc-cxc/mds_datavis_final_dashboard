@@ -212,7 +212,7 @@ function App() {
       </div>
           <ChartCard
             title="Top 商品榜"
-            subtitle="支持点击查看 Drill-down 明细"
+            subtitle="点击查看商品详细分析"
             glowColor="primary"
             chartId="top-items-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["top-items"] })}
@@ -231,7 +231,7 @@ function App() {
           </ChartCard>
           <ChartCard
             title="Top 品类榜"
-            subtitle="洞察热门品类表现，支持 Drill-down"
+            subtitle="点击查看品类详细分析"
             glowColor="accent"
             chartId="top-categories-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["top-categories"] })}
@@ -251,7 +251,7 @@ function App() {
           </ChartCard>
           <ChartCard
             title="转换率漏斗"
-            subtitle="点击阶段查看详细分析"
+            subtitle="点击查看阶段详细分析"
             glowColor="secondary"
             chartId="funnel-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["funnel"] })}
@@ -267,7 +267,7 @@ function App() {
           </ChartCard>
           <ChartCard
             title="用户活跃时间段"
-            subtitle="点击时间段查看详细分析"
+            subtitle="点击查看时间段详细分析"
             glowColor="success"
             chartId="active-hours-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["active-hours"] })}
@@ -284,7 +284,7 @@ function App() {
           </ChartCard>
           <ChartCard
             title="用户留存率（月度）"
-            subtitle="点击图例或折线查看 Cohort 详情"
+            subtitle="点击查看 Cohort 详情"
             glowColor="accent"
             chartId="monthly-retention-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["monthly-retention"] })}
@@ -301,7 +301,7 @@ function App() {
           </ChartCard>
           <ChartCard
             title="周一到周日用户数"
-            subtitle="点击柱状图查看该天的详细分析"
+            subtitle="点击查看该天的详细分析"
             glowColor="success"
             chartId="weekday-users-chart"
             onRefresh={() => queryClient.invalidateQueries({ queryKey: ["weekday-users"] })}
