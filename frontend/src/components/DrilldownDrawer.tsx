@@ -27,6 +27,9 @@ const eventColors: Record<string, string> = {
   transaction: "#06ffa5",
 };
 
+// 定义固定的指标顺序：浏览、加购、购买
+const eventOrder: string[] = ["view", "addtocart", "transaction"];
+
 export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom, dateTo, onClose }: Props) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["drilldown", entityType, entityId, segment, dateFrom, dateTo],
@@ -65,40 +68,43 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
       },
     },
     series:
-      data?.series?.map((serie, idx) => ({
-        name: eventLabels[serie.label] || serie.label,
-        type: "line",
-        smooth: true,
-        symbol: "circle",
-        symbolSize: 6,
-        data: serie.data.map((point) => point.value),
-        lineStyle: {
-          width: 2,
-          color: eventColors[serie.label] || "#00d4ff",
-        },
-        itemStyle: {
-          color: eventColors[serie.label] || "#00d4ff",
-          borderColor: "#fff",
-          borderWidth: 1,
-        },
-        areaStyle: {
-          color: {
-            type: "linear",
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              {
-                offset: 0,
-                color: `${eventColors[serie.label] || "#00d4ff"}40`,
-              },
-              { offset: 1, color: `${eventColors[serie.label] || "#00d4ff"}05` },
-            ],
+      eventOrder
+        .map((eventKey) => data?.series?.find((serie) => serie.label === eventKey))
+        .filter((serie) => serie !== undefined)
+        .map((serie, idx) => ({
+          name: eventLabels[serie!.label] || serie!.label,
+          type: "line",
+          smooth: true,
+          symbol: "circle",
+          symbolSize: 6,
+          data: serie!.data.map((point) => point.value),
+          lineStyle: {
+            width: 2,
+            color: eventColors[serie!.label] || "#00d4ff",
           },
-        },
-        animationDelay: idx * 100,
-      })) ?? [],
+          itemStyle: {
+            color: eventColors[serie!.label] || "#00d4ff",
+            borderColor: "#fff",
+            borderWidth: 1,
+          },
+          areaStyle: {
+            color: {
+              type: "linear",
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: `${eventColors[serie!.label] || "#00d4ff"}40`,
+                },
+                { offset: 1, color: `${eventColors[serie!.label] || "#00d4ff"}05` },
+              ],
+            },
+          },
+          animationDelay: idx * 100,
+        })) ?? [],
   };
 
   // 活跃时间段图配置
@@ -199,22 +205,24 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
           <div className="glass rounded-2xl p-4 border border-glass-border">
             <div className="text-sm text-muted uppercase tracking-widest mb-4">事件概览</div>
             <Row gutter={[16, 16]}>
-              {Object.entries(data.summary).map(([key, value]) => (
-                <Col span={8} key={key}>
-                  <div className="text-center">
-                    <div
-                      className="text-2xl font-bold mb-1"
-                      style={{
-                        color: eventColors[key] || "#00d4ff",
-                        textShadow: `0 0 10px ${eventColors[key] || "#00d4ff"}40`,
-                      }}
-                    >
-                      {value.toLocaleString()}
+              {eventOrder
+                .filter((key) => data.summary[key] !== undefined)
+                .map((key) => (
+                  <Col span={8} key={key}>
+                    <div className="text-center">
+                      <div
+                        className="text-2xl font-bold mb-1"
+                        style={{
+                          color: eventColors[key] || "#00d4ff",
+                          textShadow: `0 0 10px ${eventColors[key] || "#00d4ff"}40`,
+                        }}
+                      >
+                        {data.summary[key].toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted">{eventLabels[key] || key}</div>
                     </div>
-                    <div className="text-xs text-muted">{eventLabels[key] || key}</div>
-                  </div>
-                </Col>
-              ))}
+                  </Col>
+                ))}
             </Row>
           </div>
 

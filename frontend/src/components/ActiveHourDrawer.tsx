@@ -27,6 +27,9 @@ const eventColors: Record<string, string> = {
   transaction: "#06ffa5",
 };
 
+// 定义固定的指标顺序：浏览、加购、购买
+const eventOrder: string[] = ["view", "addtocart", "transaction"];
+
 export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClose }: Props) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["active-hour", hour, segment, dateFrom, dateTo],
@@ -292,24 +295,26 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
                   事件类型分布
                 </div>
                 <Row gutter={[16, 16]}>
-                  {Object.entries(data.event_distribution).map(([key, value]) => (
-                    <Col span={8} key={key}>
-                      <div className="text-center">
-                        <div
-                          className="text-2xl font-bold mb-1"
-                          style={{
-                            color: eventColors[key] || "#00d4ff",
-                            textShadow: `0 0 10px ${eventColors[key] || "#00d4ff"}40`,
-                          }}
-                        >
-                          {value.toLocaleString()}
+                  {eventOrder
+                    .filter((key) => data.event_distribution[key] !== undefined)
+                    .map((key) => (
+                      <Col span={8} key={key}>
+                        <div className="text-center">
+                          <div
+                            className="text-2xl font-bold mb-1"
+                            style={{
+                              color: eventColors[key] || "#00d4ff",
+                              textShadow: `0 0 10px ${eventColors[key] || "#00d4ff"}40`,
+                            }}
+                          >
+                            {data.event_distribution[key].toLocaleString()}
+                          </div>
+                          <div className="text-xs text-muted">
+                            {eventLabels[key] || key}
+                          </div>
                         </div>
-                        <div className="text-xs text-muted">
-                          {eventLabels[key] || key}
-                        </div>
-                      </div>
-                    </Col>
-                  ))}
+                      </Col>
+                    ))}
                 </Row>
               </div>
             )}
