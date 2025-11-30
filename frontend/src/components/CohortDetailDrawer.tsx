@@ -34,7 +34,7 @@ const eventOrder: string[] = ["view", "addtocart", "transaction"];
 const segmentOrder: string[] = ["All", "Hesitant", "Impulsive", "Collector"];
 
 export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateTo, onClose }: Props) {
-  const { width, ResizeHandle } = useResizableDrawer({ defaultWidth: 600, minWidth: 400, maxWidth: 1200 });
+  const { width, ResizeHandle } = useResizableDrawer({ defaultWidth: 700, minWidth: 400, maxWidth: 1200 });
   
   const { data, isLoading, error } = useQuery({
     queryKey: ["cohort-detail", cohortMonth, segment, dateFrom, dateTo],
@@ -239,9 +239,9 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
             </Row>
           </div>
 
-          {/* 事件统计卡片 */}
+          {/* 事件概览卡片 */}
           <div className="glass rounded-2xl p-4 border border-glass-border">
-            <div className="text-sm text-muted uppercase tracking-widest mb-4">事件统计</div>
+            <div className="text-sm text-muted uppercase tracking-widest mb-4">事件概览</div>
             <Row gutter={[16, 16]}>
               {eventOrder
                 .filter((key) => data.summary[key] !== undefined)

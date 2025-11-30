@@ -22,6 +22,15 @@ const eventLabels: Record<string, string> = {
   transaction: "购买",
 };
 
+const eventColors: Record<string, string> = {
+  view: "#00d4ff",
+  addtocart: "#ff006e",
+  transaction: "#06ffa5",
+};
+
+// 定义固定的指标顺序：浏览、加购、购买
+const eventOrder: string[] = ["view", "addtocart", "transaction"];
+
 // 定义固定的用户群体顺序：All, Hesitant, Impulsive, Collector
 const segmentOrder: string[] = ["All", "Hesitant", "Impulsive", "Collector"];
 
@@ -214,39 +223,31 @@ export function WeekdayDetailDrawer({ open, weekday, segment, dateFrom, dateTo, 
       ) : (
         <div className="space-y-6">
           {/* 事件概览卡片 */}
-          <div className="glass rounded-2xl p-4 border border-glass-border">
-            <div className="text-sm text-muted uppercase tracking-widest mb-4">事件概览</div>
-            <Row gutter={[16, 16]}>
-              <Col span={6}>
-                <div className="text-center">
-                  <div
-                    className="text-2xl font-bold mb-1"
-                    style={{
-                      color: "#00d4ff",
-                      textShadow: "0 0 10px rgba(0, 212, 255, 0.4)",
-                    }}
-                  >
-                    {data.user_count.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted">用户数</div>
-                </div>
-              </Col>
-              <Col span={6}>
-                <div className="text-center">
-                  <div
-                    className="text-2xl font-bold mb-1"
-                    style={{
-                      color: "#00d4ff",
-                      textShadow: "0 0 10px rgba(0, 212, 255, 0.4)",
-                    }}
-                  >
-                    {data.total_count.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted">事件总数</div>
-                </div>
-              </Col>
-            </Row>
-          </div>
+          {data.event_distribution && Object.keys(data.event_distribution).length > 0 && (
+            <div className="glass rounded-2xl p-4 border border-glass-border">
+              <div className="text-sm text-muted uppercase tracking-widest mb-4">事件概览</div>
+              <Row gutter={[16, 16]}>
+                {eventOrder
+                  .filter((key) => data.event_distribution[key] !== undefined)
+                  .map((key) => (
+                    <Col span={8} key={key}>
+                      <div className="text-center">
+                        <div
+                          className="text-2xl font-bold mb-1"
+                          style={{
+                            color: eventColors[key] || "#00d4ff",
+                            textShadow: `0 0 10px ${eventColors[key] || "#00d4ff"}40`,
+                          }}
+                        >
+                          {data.event_distribution[key].toLocaleString()}
+                        </div>
+                        <div className="text-xs text-muted">{eventLabels[key] || key}</div>
+                      </div>
+                    </Col>
+                  ))}
+              </Row>
+            </div>
+          )}
 
             {/* 用户群体分布 */}
             {data.user_segment_distribution && (
@@ -270,35 +271,6 @@ export function WeekdayDetailDrawer({ open, weekday, segment, dateFrom, dateTo, 
                 </div>
             </div>
             )}
-
-          {/* 事件类型分布 */}
-          {data.event_distribution && Object.keys(data.event_distribution).length > 0 && (
-            <div className="glass rounded-2xl p-4 border border-glass-border">
-              <div className="text-sm text-muted uppercase tracking-widest mb-4">
-                事件类型分布
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {/* 按照固定顺序：浏览、加购、购买 */}
-                {(["view", "addtocart", "transaction"] as const).map((eventType) => {
-                  const count = data.event_distribution[eventType];
-                  if (count === undefined) return null;
-                  return (
-                    <Tag
-                      key={eventType}
-                      color={
-                        eventType === "view" ? "blue" :
-                        eventType === "addtocart" ? "magenta" :
-                        eventType === "transaction" ? "green" : "default"
-                      }
-                      className="px-3 py-1 text-sm"
-                    >
-                      {eventLabels[eventType] || eventType}: {count.toLocaleString()}
-                    </Tag>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* 转化率卡片 */}
           {data.conversion_rates && (

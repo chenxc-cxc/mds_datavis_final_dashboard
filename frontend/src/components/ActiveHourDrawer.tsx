@@ -295,12 +295,12 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
               </div>
             )}
 
-          {/* 事件类型分布 */}
+          {/* 事件概览 */}
           {data.event_distribution &&
             Object.keys(data.event_distribution).length > 0 && (
               <div className="glass rounded-2xl p-4 border border-glass-border">
                 <div className="text-sm text-muted uppercase tracking-widest mb-4">
-                  事件类型分布
+                  事件概览
                 </div>
                 <Row gutter={[16, 16]}>
                   {eventOrder
