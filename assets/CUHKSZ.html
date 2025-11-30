@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .icon-container {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 10px 25px rgba(101, 45, 138, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* 背景流动的紫色光晕 */
+    .bg-gradient {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(from 0deg, #652D8A, #9F5F9F, #CFB53B, #652D8A);
+        animation: spin 4s linear infinite;
+        opacity: 0.1;
+    }
+
+    /* 核心文字层 */
+    .logo-text {
+        position: relative;
+        font-size: 20px;
+        font-weight: 800;
+        color: #652D8A; /* CUHK Purple */
+        letter-spacing: 1px;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo-text span {
+        display: inline-block;
+        animation: fadeUp 2s ease-in-out infinite alternate;
+    }
+
+    /* 凤凰羽翼抽象线条 */
+    .wing {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border: 4px solid rgba(101, 45, 138, 0.6);
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        animation: morph 6s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes morph {
+        0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg); }
+        34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+        67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; transform: rotate(120deg); }
+    }
+
+    @keyframes fadeUp {
+        0% { opacity: 0.7; transform: scale(0.95); }
+        100% { opacity: 1; transform: scale(1.05); text-shadow: 0 0 10px rgba(101, 45, 138, 0.4); }
+    }
+</style>
+</head>
+<body>
+
+<div class="icon-container">
+    <div class="bg-gradient"></div>
+    <div class="wing"></div>
+    <div class="logo-text">
+        <span>CUHK</span>
+        <span style="font-size: 14px; color: #9f7cab;">SZ</span>
+    </div>
+</div>
+
+</body>
+</html>

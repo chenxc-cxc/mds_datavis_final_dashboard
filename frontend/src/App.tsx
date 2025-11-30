@@ -18,6 +18,7 @@ import { FilterBar } from "./components/FilterBar";
 import { ChartCard } from "./components/ChartCard";
 import { BarChart } from "./components/charts/BarChart";
 import { FunnelChart } from "./components/charts/FunnelChart";
+import { CUHKSZIcon } from "./components/CUHKSZIcon";
 import { LineChart } from "./components/charts/LineChart";
 import { RetentionChart } from "./components/charts/RetentionChart";
 import { WeekdayUserChart } from "./components/charts/WeekdayUserChart";
@@ -151,17 +152,11 @@ function App() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="-mt-10"
+              className="-mt-12"
             >
               <Typography.Title level={2} className="!text-slate-800 !mb-1 text-gradient">
-                <span className="inline-flex items-center gap-2">
-                  <motion.span
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                    className="text-3xl"
-                  >
-                  😉
-                  </motion.span>
+                <span className="inline-flex items-center gap-3">
+                  <CUHKSZIcon size={48} />
                   电商智能分析看板
                 </span>
               </Typography.Title>
