@@ -293,22 +293,22 @@ project/
 
 ## 性能优化
 
-1. **DuckDB 列式存储**  
+1. **DuckDB 列式存储**
    首次启动会自动将 CSV 转换为 DuckDB 格式，查询速度提升显著。
 
-2. **用户分群结果缓存**  
+2. **用户分群结果缓存**
    用户分类结果会序列化为 `cache/user_segments.pkl`（带数据文件 mtime 与阈值哈希），后续启动直接复用，避免重复聚合大量用户。
 
-3. **Redis 二级缓存**  
+3. **Redis 二级缓存**
    FastAPI 层对热点接口（TopN、Funnel、Drill-down）增加 Redis TTL 缓存，进一步减轻 DuckDB 查询压力。
 
-4. **响应式图表**  
+4. **响应式图表**
    所有图表使用 `ResizeObserver` 自动适配容器大小变化，无需手动刷新。
 
-5. **按需加载**  
+5. **按需加载**
    Drill-down 详情仅在用户点击时加载，减少初始渲染压力。
 
-6. **React Query 缓存**  
+6. **React Query 缓存**
    前端使用 React Query 进行请求去重和缓存，避免重复请求。
 
 ## 注意事项
