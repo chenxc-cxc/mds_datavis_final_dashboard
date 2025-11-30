@@ -151,6 +151,7 @@ function App() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
+              className="-mt-10"
             >
               <Typography.Title level={2} className="!text-slate-800 !mb-1 text-gradient">
                 <span className="inline-flex items-center gap-2">
@@ -159,7 +160,7 @@ function App() {
                     transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
                     className="text-3xl"
                   >
-                    📊
+                  😉
                   </motion.span>
                   电商智能分析看板
                 </span>

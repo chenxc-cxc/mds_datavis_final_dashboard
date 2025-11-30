@@ -18,7 +18,8 @@ export function RefreshIndicator({ lastUpdated, isRefreshing = false, onRefresh 
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="flex items-center gap-2 px-4 py-2 glass rounded-full border border-glass-border"
+      className="flex items-center gap-2 px-4 py-2"
+      style={{ marginTop: "-10px" }}
     >
       <AnimatePresence mode="wait">
         {isRefreshing ? (
@@ -28,6 +29,7 @@ export function RefreshIndicator({ lastUpdated, isRefreshing = false, onRefresh 
             animate={{ opacity: 1, rotate: 0 }}
             exit={{ opacity: 0, rotate: 180 }}
             transition={{ duration: 0.3 }}
+            
           >
             <ReloadOutlined spin className="text-primary" />
           </motion.div>
@@ -44,8 +46,8 @@ export function RefreshIndicator({ lastUpdated, isRefreshing = false, onRefresh 
         )}
       </AnimatePresence>
       <div className="flex flex-col">
-        <span className="text-xs text-muted">最后更新</span>
-        <span className="text-xs font-semibold text-slate-700">{timeAgo}</span>
+        <span className="text-xs text-muted">最后更新 {timeAgo}</span>
+        {/* <span className="text-xs font-semibold text-slate-700">{timeAgo}</span> */}
       </div>
       {onRefresh && (
         <motion.button
