@@ -32,6 +32,55 @@ const metricConfig: Record<string, { color: string; gradient: string; icon: stri
 // 定义固定的指标顺序：浏览、加购、购买
 const metricOrder: string[] = ["view", "addtocart", "transaction"];
 
+// 圆形进度环组件
+const CircularProgress = ({ 
+  percentage, 
+  color, 
+  size = 80 
+}: { 
+  percentage: number; 
+  color: string; 
+  size?: number;
+}) => {
+  const radius = (size - 8) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percentage / 100) * circumference;
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg className="transform -rotate-90" width={size} height={size}>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="4"
+          fill="none"
+          className="text-gray-200"
+        />
+        <motion.circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={color}
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-xs font-bold" style={{ color }}>
+          {percentage.toFixed(0)}%
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export function MetricsGrid({ metrics }: Props) {
   // 按照固定顺序获取指标数据
   const entries = metricOrder
@@ -48,79 +97,36 @@ export function MetricsGrid({ metrics }: Props) {
         return (
           <motion.div
             key={key}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: idx * 0.1 }}
-            whileHover={{ scale: 1.02, y: -4 }}
-            className="glass rounded-2xl p-6 shadow-card glass-hover transition-all duration-300 relative overflow-hidden group"
+            whileHover={{ scale: 1.03, y: -4 }}
+            className="glass rounded-3xl p-6 relative overflow-hidden group"
           >
-            {/* 光效背景 */}
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{
-                background: `radial-gradient(circle at 50% 50%, ${config.color}15, transparent 70%)`,
-              }}
-            />
-            
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <motion.div
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-glow`}
-                  whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {config.icon}
-                </motion.div>
-                <div className="text-right">
-                  <p className="text-muted text-xs uppercase tracking-widest font-semibold mb-1">
+            <div className="flex items-center gap-6">
+              <CircularProgress percentage={percentage} color={config.color} />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{config.icon}</span>
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
                     {friendlyNames[key] ?? key}
                   </p>
-                  <motion.p
-                    className="text-4xl font-bold"
-                    style={{
-                      color: config.color,
-                      textShadow: `0 0 20px ${config.color}40`,
-                    }}
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: idx * 0.1 + 0.2 }}
-                  >
-                    <CountUp
-                      end={value || 0}
-                      duration={2}
-                      separator=","
-                      decimals={0}
-                      useEasing={true}
-                    />
-                  </motion.p>
                 </div>
-              </div>
-              <div className="h-1 bg-surface-3 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full relative"
-                  style={{
-                    background: `linear-gradient(90deg, ${config.color}, ${config.color}80)`,
-                    boxShadow: `0 0 10px ${config.color}60`,
-                  }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${percentage}%` }}
-                  transition={{ duration: 1.5, delay: idx * 0.1 + 0.3, ease: "easeOut" }}
+                <motion.p
+                  className="text-3xl font-bold"
+                  style={{ color: config.color }}
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 + 0.2 }}
                 >
-                  <motion.div
-                    className="absolute inset-0"
-                    style={{
-                      background: `linear-gradient(90deg, transparent, ${config.color}40, transparent)`,
-                    }}
-                    animate={{
-                      x: ["-100%", "100%"],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatDelay: 1,
-                    }}
+                  <CountUp
+                    end={value || 0}
+                    duration={2}
+                    separator=","
+                    decimals={0}
+                    useEasing={true}
                   />
-                </motion.div>
+                </motion.p>
               </div>
             </div>
           </motion.div>
