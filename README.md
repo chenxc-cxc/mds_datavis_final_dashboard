@@ -159,6 +159,7 @@ timestamp,visitorid,event,itemid,categoryid
 ### 2. 启动后端（FastAPI）
 
 ```bash
+# 注意选择你心仪的py环境
 cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
