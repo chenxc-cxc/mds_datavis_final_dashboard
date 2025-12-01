@@ -206,117 +206,117 @@ function App() {
             />
           </motion.div>
 
-        <DraggableGrid>
-      <div>
-            <MetricsGrid metrics={eventCounts ?? {}} />
-      </div>
-          <ChartCard
-            title="Top 商品榜"
-            subtitle="点击查看商品详细分析"
-            glowColor="primary"
-            chartId="top-items-chart"
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: ["top-items"] })}
-            isRefreshing={loadingItems}
-          >
-            {loadingItems ? (
-              <Spin size="large" />
-            ) : (
-              <BarChart
-                categories={topItems?.map((item) => item.label) ?? []}
-                values={topItems?.map((item) => item.value) ?? []}
-                horizontal
-                onBarClick={handleBarClick(topItems, "item")}
-              />
-            )}
-          </ChartCard>
-          <ChartCard
-            title="Top 品类榜"
-            subtitle="点击查看品类详细分析"
-            glowColor="accent"
-            chartId="top-categories-chart"
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: ["top-categories"] })}
-            isRefreshing={loadingCategories}
-          >
-            {loadingCategories ? (
-              <Spin size="large" />
-            ) : (
-              <BarChart
-                categories={topCategories?.map((item) => item.label) ?? []}
-                values={topCategories?.map((item) => item.value) ?? []}
-                color="#ec4899"
-                horizontal
-                onBarClick={handleBarClick(topCategories, "category")}
-              />
-            )}
-          </ChartCard>
-          <ChartCard
-            title="转换率漏斗"
-            subtitle="点击查看阶段详细分析"
-            glowColor="secondary"
-            chartId="funnel-chart"
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: ["funnel"] })}
-          >
-            {funnelData ? (
-              <FunnelChart
-                data={funnelData}
-                onStageClick={(stage) => setFunnelStage(stage as "view" | "addtocart" | "transaction")}
-              />
-            ) : (
-              <Spin size="large" />
-            )}
-          </ChartCard>
-          <ChartCard
-            title="用户活跃时间段"
-            subtitle="点击查看时间段详细分析"
-            glowColor="success"
-            chartId="active-hours-chart"
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: ["active-hours"] })}
-          >
-            {activeHours ? (
-              <LineChart
-                categories={activeHourCategories}
-                values={activeHourValues}
-                onHourClick={(hour) => setActiveHour(hour)}
-              />
-            ) : (
-              <Spin size="large" />
-            )}
-          </ChartCard>
-          <ChartCard
-            title="用户留存率（月度）"
-            subtitle="点击查看 Cohort 详情"
-            glowColor="accent"
-            chartId="monthly-retention-chart"
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: ["monthly-retention"] })}
-            isRefreshing={loadingRetention}
-          >
-            {loadingRetention ? (
-              <Spin size="large" />
-            ) : (
-              <RetentionChart
-                data={monthlyRetention || []}
-                onCohortClick={(cohortMonth) => setCohortMonth(cohortMonth)}
-              />
-            )}
-          </ChartCard>
-          <ChartCard
-            title="周一到周日用户数"
-            subtitle="点击查看该天的详细分析"
-            glowColor="success"
-            chartId="weekday-users-chart"
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: ["weekday-users"] })}
-            isRefreshing={loadingWeekdayUsers}
-          >
-            {loadingWeekdayUsers ? (
-              <Spin size="large" />
-            ) : (
-              <WeekdayUserChart 
-                data={weekdayUsers || null}
-                onWeekdayClick={(weekday) => setSelectedWeekday(weekday)}
-              />
-            )}
-          </ChartCard>
-        </DraggableGrid>
+          <DraggableGrid>
+            <div>
+              <MetricsGrid metrics={eventCounts ?? {}} />
+            </div>
+            <ChartCard
+              title="Top 商品榜"
+              subtitle="点击查看商品详细分析"
+              glowColor="primary"
+              chartId="top-items-chart"
+              onRefresh={() => queryClient.invalidateQueries({ queryKey: ["top-items"] })}
+              isRefreshing={loadingItems}
+            >
+              {loadingItems ? (
+                <Spin size="large" />
+              ) : (
+                <BarChart
+                  categories={topItems?.map((item) => item.label) ?? []}
+                  values={topItems?.map((item) => item.value) ?? []}
+                  horizontal
+                  onBarClick={handleBarClick(topItems, "item")}
+                />
+              )}
+            </ChartCard>
+            <ChartCard
+              title="Top 品类榜"
+              subtitle="点击查看品类详细分析"
+              glowColor="accent"
+              chartId="top-categories-chart"
+              onRefresh={() => queryClient.invalidateQueries({ queryKey: ["top-categories"] })}
+              isRefreshing={loadingCategories}
+            >
+              {loadingCategories ? (
+                <Spin size="large" />
+              ) : (
+                <BarChart
+                  categories={topCategories?.map((item) => item.label) ?? []}
+                  values={topCategories?.map((item) => item.value) ?? []}
+                  color="#ec4899"
+                  horizontal
+                  onBarClick={handleBarClick(topCategories, "category")}
+                />
+              )}
+            </ChartCard>
+            <ChartCard
+              title="转换率漏斗"
+              subtitle="点击查看阶段详细分析"
+              glowColor="secondary"
+              chartId="funnel-chart"
+              onRefresh={() => queryClient.invalidateQueries({ queryKey: ["funnel"] })}
+            >
+              {funnelData ? (
+                <FunnelChart
+                  data={funnelData}
+                  onStageClick={(stage) => setFunnelStage(stage as "view" | "addtocart" | "transaction")}
+                />
+              ) : (
+                <Spin size="large" />
+              )}
+            </ChartCard>
+            <ChartCard
+              title="用户活跃时间段"
+              subtitle="点击查看时间段详细分析"
+              glowColor="success"
+              chartId="active-hours-chart"
+              onRefresh={() => queryClient.invalidateQueries({ queryKey: ["active-hours"] })}
+            >
+              {activeHours ? (
+                <LineChart
+                  categories={activeHourCategories}
+                  values={activeHourValues}
+                  onHourClick={(hour) => setActiveHour(hour)}
+                />
+              ) : (
+                <Spin size="large" />
+              )}
+            </ChartCard>
+            <ChartCard
+              title="用户留存率（月度）"
+              subtitle="点击查看 Cohort 详情"
+              glowColor="accent"
+              chartId="monthly-retention-chart"
+              onRefresh={() => queryClient.invalidateQueries({ queryKey: ["monthly-retention"] })}
+              isRefreshing={loadingRetention}
+            >
+              {loadingRetention ? (
+                <Spin size="large" />
+              ) : (
+                <RetentionChart
+                  data={monthlyRetention || []}
+                  onCohortClick={(cohortMonth) => setCohortMonth(cohortMonth)}
+                />
+              )}
+            </ChartCard>
+            <ChartCard
+              title="周一到周日用户数"
+              subtitle="点击查看该天的详细分析"
+              glowColor="success"
+              chartId="weekday-users-chart"
+              onRefresh={() => queryClient.invalidateQueries({ queryKey: ["weekday-users"] })}
+              isRefreshing={loadingWeekdayUsers}
+            >
+              {loadingWeekdayUsers ? (
+                <Spin size="large" />
+              ) : (
+                <WeekdayUserChart
+                  data={weekdayUsers || null}
+                  onWeekdayClick={(weekday) => setSelectedWeekday(weekday)}
+                />
+              )}
+            </ChartCard>
+          </DraggableGrid>
         </Content>
       </motion.div>
 

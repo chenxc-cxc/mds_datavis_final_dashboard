@@ -33,13 +33,13 @@ const metricConfig: Record<string, { color: string; gradient: string; icon: stri
 const metricOrder: string[] = ["view", "addtocart", "transaction"];
 
 // 圆形进度环组件
-const CircularProgress = ({ 
-  percentage, 
-  color, 
-  size = 80 
-}: { 
-  percentage: number; 
-  color: string; 
+const CircularProgress = ({
+  percentage,
+  color,
+  size = 80
+}: {
+  percentage: number;
+  color: string;
   size?: number;
 }) => {
   const radius = (size - 8) / 2;

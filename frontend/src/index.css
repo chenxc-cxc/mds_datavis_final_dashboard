@@ -27,7 +27,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
@@ -42,7 +42,7 @@ body::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
+  background-image:
     linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
   background-size: 50px 50px;
@@ -130,9 +130,12 @@ body::after {
 }
 
 @keyframes glow-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.3;
   }
+
   50% {
     opacity: 0.6;
   }
@@ -155,11 +158,11 @@ body::after {
   opacity: 0;
   transition: opacity 0.3s;
   transform: translate(-50%, -50%);
-  }
+}
 
 .mouse-glow:hover::after {
   opacity: 1;
-  }
+}
 
 /* 微交互反馈 */
 .interactive-element {
