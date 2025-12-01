@@ -16,19 +16,23 @@ const STORAGE_KEY = "dashboard-layout";
 
 // 默认布局配置
 const getDefaultLayout = (cols: number): Layout[] => [
-  { i: "metrics", x: 0, y: 0, w: cols, h: 2, minW: cols, minH: 2 },
-  { i: "top-items", x: 0, y: 2, w: cols / 2, h: 6, minW: 4, minH: 4 },
-  { i: "top-categories", x: cols / 2, y: 2, w: cols / 2, h: 6, minW: 4, minH: 4 },
-  { i: "funnel", x: 0, y: 8, w: cols / 2, h: 6, minW: 4, minH: 4 },
-  { i: "active-hours", x: cols / 2, y: 8, w: cols / 2, h: 6, minW: 4, minH: 4 },
-  { i: "monthly-retention", x: 0, y: 14, w: cols / 2, h: 6, minW: 4, minH: 4 },
-  { i: "weekday-users", x: cols / 2, y: 14, w: cols / 2, h: 6, minW: 4, minH: 4 },
+  // 三个指标卡片：浏览量 / 加购量 / 购买量
+  { i: "metric-view", x: 0, y: 0, w: cols / 3, h: 3, minW: 4, minH: 3 },
+  { i: "metric-addtocart", x: cols / 3, y: 0, w: cols / 3, h: 3, minW: 4, minH: 3 },
+  { i: "metric-transaction", x: (cols * 2) / 3, y: 0, w: cols / 3, h: 3, minW: 4, minH: 3 },
+  // 其他图表
+  { i: "top-items", x: 0, y: 3, w: cols / 2, h: 6, minW: 4, minH: 4 },
+  { i: "top-categories", x: cols / 2, y: 3, w: cols / 2, h: 6, minW: 4, minH: 4 },
+  { i: "funnel", x: 0, y: 9, w: cols / 2, h: 6, minW: 4, minH: 4 },
+  { i: "active-hours", x: cols / 2, y: 9, w: cols / 2, h: 6, minW: 4, minH: 4 },
+  { i: "monthly-retention", x: 0, y: 15, w: cols / 2, h: 6, minW: 4, minH: 4 },
+  { i: "weekday-users", x: cols / 2, y: 15, w: cols / 2, h: 6, minW: 4, minH: 4 },
 ];
 
 export function DraggableGrid({
   children,
   cols = 24,
-  rowHeight = 60,
+  rowHeight = 30,
   onLayoutChange,
 }: DraggableGridProps) {
   const [layout, setLayout] = useState<Layout[]>(() => {
@@ -37,7 +41,9 @@ export function DraggableGrid({
     const defaultLayout = getDefaultLayout(cols);
     if (saved) {
       try {
-        const savedLayout = JSON.parse(saved);
+        const savedLayout = (JSON.parse(saved) as Layout[]).filter(
+          (item) => item.i !== "metrics" // 迁移旧版本的 metrics 容器
+        );
         const savedKeys = new Set(savedLayout.map((item: Layout) => item.i));
 
         // 合并布局：使用保存的布局，并添加缺失的默认项
@@ -65,7 +71,9 @@ export function DraggableGrid({
     } else {
       // 如果保存的布局存在，使用它但调整 x 坐标以适应新的 cols，并添加缺失的项
       try {
-        const parsed = JSON.parse(saved);
+        const parsed = (JSON.parse(saved) as Layout[]).filter(
+          (item) => item.i !== "metrics" // 迁移旧版本的 metrics 容器
+        );
         const savedKeys = new Set(parsed.map((item: Layout) => item.i));
 
         const adjusted = parsed.map((item: Layout) => ({
@@ -96,7 +104,17 @@ export function DraggableGrid({
   };
 
   const chartKeys = useMemo(
-    () => ["metrics", "top-items", "top-categories", "funnel", "active-hours", "monthly-retention", "weekday-users"],
+    () => [
+      "metric-view",
+      "metric-addtocart",
+      "metric-transaction",
+      "top-items",
+      "top-categories",
+      "funnel",
+      "active-hours",
+      "monthly-retention",
+      "weekday-users",
+    ],
     []
   );
 

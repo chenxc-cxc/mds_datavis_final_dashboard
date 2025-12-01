@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { Layout, Typography, Spin } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import CountUp from "react-countup";
 import type { Dayjs } from "dayjs";
 import {
   fetchActiveHours,
@@ -23,7 +24,6 @@ import { CUHKSZBackground } from "./components/CUHKSZBackground";
 import { LineChart } from "./components/charts/LineChart";
 import { RetentionChart } from "./components/charts/RetentionChart";
 import { WeekdayUserChart } from "./components/charts/WeekdayUserChart";
-import { MetricsGrid } from "./components/MetricsGrid";
 import { DrilldownDrawer } from "./components/DrilldownDrawer";
 import { FunnelStageDrawer } from "./components/FunnelStageDrawer";
 import { ActiveHourDrawer } from "./components/ActiveHourDrawer";
@@ -35,6 +35,125 @@ import { DateRangePicker } from "./components/DateRangePicker";
 import { RefreshIndicator } from "./components/RefreshIndicator";
 
 const { Header, Content } = Layout;
+
+type MetricKey = "view" | "addtocart" | "transaction";
+
+const metricFriendlyNames: Record<MetricKey, string> = {
+  view: "浏览量",
+  addtocart: "加购量",
+  transaction: "购买量",
+};
+
+const metricConfig: Record<MetricKey, { color: string; icon: string }> = {
+  view: {
+    color: "#3b82f6",
+    icon: "👁️",
+  },
+  addtocart: {
+    color: "#ec4899",
+    icon: "🛒",
+  },
+  transaction: {
+    color: "#10b981",
+    icon: "💰",
+  },
+};
+
+const CircularProgress = ({
+  percentage,
+  color,
+  size = 80,
+}: {
+  percentage: number;
+  color: string;
+  size?: number;
+}) => {
+  const radius = (size - 8) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percentage / 100) * circumference;
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg className="transform -rotate-90" width={size} height={size}>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="4"
+          fill="none"
+          className="text-gray-200"
+        />
+        <motion.circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={color}
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-xs font-bold" style={{ color }}>
+          {percentage.toFixed(0)}%
+        </span>
+      </div>
+    </div>
+  );
+};
+
+function DraggableMetricCard({
+  metricKey,
+  value,
+  total,
+  index,
+}: {
+  metricKey: MetricKey;
+  value: number;
+  total: number;
+  index: number;
+}) {
+  const config = metricConfig[metricKey];
+  const percentage = total > 0 ? Math.min((value / total) * 100, 100) : 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ scale: 1.03, y: -4 }}
+      className="glass rounded-3xl p-6 relative overflow-hidden group h-full"
+    >
+      {/* 透明拖拽区域：仅顶部一条“标题栏”，避免覆盖整个卡片 */}
+      <div className="drag-handle absolute top-0 left-0 right-0 h-6 cursor-move z-20" />
+      <div className="flex items-center gap-6 h-full relative z-10">
+        <CircularProgress percentage={percentage} color={config.color} />
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-2xl">{config.icon}</span>
+            <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+              {metricFriendlyNames[metricKey]}
+            </p>
+          </div>
+          <motion.p
+            className="text-3xl font-bold"
+            style={{ color: config.color }}
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+          >
+            <CountUp end={value || 0} duration={2} separator="," decimals={0} useEasing />
+          </motion.p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 function App() {
   const [segment, setSegment] = useState<SegmentName>("All");
@@ -154,6 +273,11 @@ function App() {
 
   const isRefreshing = loadingItems || loadingCategories;
 
+  const viewCount = eventCounts?.view ?? 0;
+  const addToCartCount = eventCounts?.addtocart ?? 0;
+  const transactionCount = eventCounts?.transaction ?? 0;
+  const totalEvents = viewCount + addToCartCount + transactionCount || 1;
+
   return (
     <Layout className="min-h-screen bg-transparent relative">
       <ParticlesBackground />
@@ -224,7 +348,28 @@ function App() {
 
           <DraggableGrid>
             <div>
-              <MetricsGrid metrics={eventCounts ?? {}} />
+              <DraggableMetricCard
+                metricKey="view"
+                value={viewCount}
+                total={totalEvents}
+                index={0}
+              />
+            </div>
+            <div>
+              <DraggableMetricCard
+                metricKey="addtocart"
+                value={addToCartCount}
+                total={totalEvents}
+                index={1}
+              />
+            </div>
+            <div>
+              <DraggableMetricCard
+                metricKey="transaction"
+                value={transactionCount}
+                total={totalEvents}
+                index={2}
+              />
             </div>
             <ChartCard
               title="Top 商品榜"
