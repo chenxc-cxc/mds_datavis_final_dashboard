@@ -53,6 +53,8 @@ function App() {
   const { data: segmentsSummary } = useQuery({
     queryKey: ["segments"],
     queryFn: fetchSegments,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const dateFrom = dateRange?.[0]?.format("YYYY-MM-DD") || null;
@@ -65,6 +67,8 @@ function App() {
   } = useQuery({
     queryKey: ["top-items", segment, metric, topN, dateFrom, dateTo],
     queryFn: () => fetchTopItems({ segment, metric, limit: topN, date_from: dateFrom, date_to: dateTo }),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const {
@@ -74,21 +78,29 @@ function App() {
   } = useQuery({
     queryKey: ["top-categories", segment, metric, topN, dateFrom, dateTo],
     queryFn: () => fetchTopCategories({ segment, metric, limit: topN, date_from: dateFrom, date_to: dateTo }),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: funnelData, dataUpdatedAt: funnelUpdatedAt } = useQuery({
     queryKey: ["funnel", segment, dateFrom, dateTo],
     queryFn: () => fetchFunnel(segment, dateFrom, dateTo),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: eventCounts, dataUpdatedAt: eventCountsUpdatedAt } = useQuery({
     queryKey: ["event-counts", segment, dateFrom, dateTo],
     queryFn: () => fetchEventCounts(segment, dateFrom, dateTo),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: activeHours, dataUpdatedAt: activeHoursUpdatedAt } = useQuery({
     queryKey: ["active-hours", segment, dateFrom, dateTo],
     queryFn: () => fetchActiveHours(segment, dateFrom, dateTo),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const {
@@ -98,6 +110,8 @@ function App() {
   } = useQuery({
     queryKey: ["monthly-retention", segment, dateFrom, dateTo],
     queryFn: () => fetchMonthlyRetention(segment, dateFrom, dateTo),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const {
@@ -107,6 +121,8 @@ function App() {
   } = useQuery({
     queryKey: ["weekday-users", segment, dateFrom, dateTo],
     queryFn: () => fetchWeekdayUsers(segment, dateFrom, dateTo),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const latestUpdate = Math.max(

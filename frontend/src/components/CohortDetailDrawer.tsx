@@ -40,6 +40,8 @@ export function CohortDetailDrawer({ open, cohortMonth, segment, dateFrom, dateT
     queryKey: ["cohort-detail", cohortMonth, segment, dateFrom, dateTo],
     queryFn: () => fetchCohortDetail(cohortMonth!, segment, dateFrom, dateTo),
     enabled: open && !!cohortMonth,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // 时间趋势图配置

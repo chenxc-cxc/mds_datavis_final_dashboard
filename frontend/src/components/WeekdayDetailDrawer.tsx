@@ -41,6 +41,8 @@ export function WeekdayDetailDrawer({ open, weekday, segment, dateFrom, dateTo, 
     queryKey: ["weekday-detail", weekday, segment, dateFrom, dateTo],
     queryFn: () => fetchWeekdayDetail(weekday!, segment, 10, dateFrom, dateTo),
     enabled: open && weekday !== null,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // 时间趋势图配置

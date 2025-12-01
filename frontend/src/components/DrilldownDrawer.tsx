@@ -38,6 +38,8 @@ export function DrilldownDrawer({ open, entityType, entityId, segment, dateFrom,
     queryKey: ["drilldown", entityType, entityId, segment, dateFrom, dateTo],
     queryFn: () => fetchDrilldown(entityType!, entityId!, segment, dateFrom, dateTo),
     enabled: open && !!entityType && !!entityId,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // 时间趋势图配置

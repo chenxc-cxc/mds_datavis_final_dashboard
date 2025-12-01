@@ -41,6 +41,8 @@ export function ActiveHourDrawer({ open, hour, segment, dateFrom, dateTo, onClos
     queryKey: ["active-hour", hour, segment, dateFrom, dateTo],
     queryFn: () => fetchActiveHourDetail(hour!, segment, 10, dateFrom, dateTo),
     enabled: open && hour !== null,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // 时间趋势图配置

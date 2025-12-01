@@ -37,6 +37,8 @@ export function FunnelStageDrawer({ open, stage, segment, dateFrom, dateTo, onCl
     queryKey: ["funnel-stage", stage, segment, dateFrom, dateTo],
     queryFn: () => fetchFunnelStageDetail(stage!, segment, 10, dateFrom, dateTo),
     enabled: open && !!stage,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // 时间趋势图配置
