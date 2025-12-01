@@ -79,7 +79,7 @@ export function BarChart({
     series: [
       {
         type: "bar",
-        data: displayValues.map((val, idx) => ({
+        data: displayValues.map((val) => ({
           value: val,
           itemStyle: {
             borderRadius: horizontal ? [0, 8, 8, 0] : [8, 8, 0, 0],

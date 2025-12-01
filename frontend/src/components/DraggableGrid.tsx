@@ -39,8 +39,7 @@ export function DraggableGrid({
       try {
         const savedLayout = JSON.parse(saved);
         const savedKeys = new Set(savedLayout.map((item: Layout) => item.i));
-        const defaultKeys = new Set(defaultLayout.map((item: Layout) => item.i));
-        
+
         // 合并布局：使用保存的布局，并添加缺失的默认项
         const mergedLayout = [...savedLayout];
         defaultLayout.forEach((defaultItem) => {
@@ -68,8 +67,7 @@ export function DraggableGrid({
       try {
         const parsed = JSON.parse(saved);
         const savedKeys = new Set(parsed.map((item: Layout) => item.i));
-        const defaultKeys = new Set(defaultLayout.map((item: Layout) => item.i));
-        
+
         const adjusted = parsed.map((item: Layout) => ({
           ...item,
           x: Math.min(item.x, cols - item.w),
