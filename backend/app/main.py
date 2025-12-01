@@ -11,7 +11,9 @@ app = FastAPI(title=settings.project_name, openapi_url=f"{settings.api_prefix}/o
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://mds-datavis-final-dashboard-1.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
