@@ -13,7 +13,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://mds-datavis-final-dashboard-1.onrender.com",
+        "https://cswun-datavis-dashboard-f.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
