@@ -129,8 +129,7 @@ function DraggableMetricCard({
       whileHover={{ scale: 1.03, y: -4 }}
       className="glass rounded-3xl p-6 relative overflow-hidden group h-full"
     >
-      {/* 透明拖拽区域：仅顶部一条“标题栏”，避免覆盖整个卡片 */}
-      <div className="drag-handle absolute top-0 left-0 right-0 h-6 cursor-move z-20" />
+      <div className="drag-handle absolute top-0 left-0 right-0 h-3 cursor-move z-20" />
       <div className="flex items-center gap-6 h-full relative z-10">
         <CircularProgress percentage={percentage} color={config.color} />
         <div className="flex-1">

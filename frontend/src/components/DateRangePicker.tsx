@@ -1,4 +1,5 @@
-import { DatePicker, Space } from "antd";
+import { DatePicker } from "antd";
+import { CalendarOutlined } from "@ant-design/icons";
 import dayjs, { type Dayjs } from "dayjs";
 import { motion } from "framer-motion";
 
@@ -33,10 +34,19 @@ export function DateRangePicker({ value, onChange, onQuickSelect }: DateRangePic
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-3"
+      className="glass rounded-2xl p-6 border border-glass-border relative overflow-hidden group"
     >
-      <Space direction="vertical" className="w-full">
-        <span className="text-xs text-muted uppercase tracking-widest font-semibold">时间范围</span>
+      {/* 渐变背景 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4">
+          <CalendarOutlined className="text-primary text-lg" />
+          <span className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+            时间范围筛选
+          </span>
+        </div>
+        
         <RangePicker
           value={value}
           onChange={onChange}
@@ -44,7 +54,9 @@ export function DateRangePicker({ value, onChange, onQuickSelect }: DateRangePic
           size="large"
           className="w-full"
           style={{
-            background: "rgba(255, 255, 255, 0.9)",
+            background: "rgba(255, 255, 255, 0.95)",
+            border: "1px solid rgba(59, 130, 246, 0.2)",
+            borderRadius: "12px",
           }}
           presets={[
             {
@@ -65,19 +77,35 @@ export function DateRangePicker({ value, onChange, onQuickSelect }: DateRangePic
             },
           ]}
         />
-      </Space>
-      <div className="flex flex-wrap gap-2">
-        {Object.keys(quickRanges).map((range) => (
-          <motion.button
-            key={range}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleQuickSelect(range)}
-            className="px-3 py-1 text-xs rounded-lg glass border border-glass-border hover:border-primary transition-colors text-slate-700 hover:text-primary"
-          >
-            {range}
-          </motion.button>
-        ))}
+        
+        <div className="flex flex-wrap gap-2 mt-4">
+          {Object.keys(quickRanges).map((range) => {
+            const isActive =
+              value &&
+              value[0]?.format("YYYY-MM-DD") === quickRanges[range][0].format("YYYY-MM-DD") &&
+              value[1]?.format("YYYY-MM-DD") === quickRanges[range][1].format("YYYY-MM-DD");
+
+            return (
+              <motion.button
+                key={range}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleQuickSelect(range)}
+                className={`
+                  px-4 py-2 text-xs font-medium rounded-xl
+                  transition-all duration-200
+                  ${
+                    isActive
+                      ? "bg-gradient-to-r from-primary to-primary-dark text-white shadow-lg shadow-primary/30"
+                      : "bg-white/60 hover:bg-white/90 text-slate-700 border border-slate-200 hover:border-primary/50"
+                  }
+                `}
+              >
+                {range}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
     </motion.div>
   );
