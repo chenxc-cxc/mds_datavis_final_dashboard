@@ -2,16 +2,23 @@
 
 一个基于 **FastAPI + React (Vite)** 的前后端分离交互式数据可视化看板，用于分析电商网站的用户行为和销售数据。
 
+## 🌐 在线访问
+
+**云端部署地址**：[https://mds-datavis-final-dashboard-1.onrender.com](https://mds-datavis-final-dashboard-1.onrender.com)
+
+可直接在浏览器中访问，无需本地安装。
+
 ## 架构概览
 
-- **后端**：FastAPI + DuckDB+ Redis 缓存  
+- **后端**：FastAPI + DuckDB  
   - 负责数据加载、用户分群、聚合计算及 Drill-down 接口  
   - 所有 API 暴露在 `/api/*`，默认端口 `8000`
 - **前端**：React + TypeScript + TailwindCSS + Ant Design + ECharts + Framer Motion  
   - 支持 Top N 指标切换、Drill-down 抽屉、响应式布局与现代化主题  
   - 通过 `.env` (`VITE_API_BASE_URL`) 指向后端 API
-- **部署模式**：前后端分离；目前仅配置了本地
-  - 预计未来: Nginx/CDN 托管静态资源，FastAPI 作为独立服务；DuckDB 文件和 Redis 提供查询加速
+- **部署模式**：前后端分离
+  - **前端**：已部署到 Render，静态资源托管
+  - **后端**：可部署到 Render 或其他云服务
 
 ## 功能特性
 
@@ -26,18 +33,25 @@
 - **Drill-down 抽屉**：点击图表元素可在侧边面板中查看详细分析
   - 所有抽屉支持从左侧边界拖拽调整宽度（300-1200px）
   - 抽屉内容自适应宽度变化
-- **实时刷新**：所有图表根据选择的用户群体、指标和日期范围自动刷新
+- **手动刷新**：所有图表根据选择的用户群体、指标和日期范围更新，支持手动刷新按钮
+  - 关闭了窗口聚焦和网络重连的自动刷新，减少不必要的请求
+  - 点击右上角刷新按钮可手动更新所有数据
 - **响应式设计**：所有图表支持窗口大小自适应调整
 - **现代 UI**：基于 Urbanist 字体与渐变色系的现代化卡片式布局，支持暗色主题，使用 Framer Motion 动画效果
   - 自定义 CUHKSZ 图标和背景
-- **可拖拽布局**：图表卡片支持拖拽重新排列位置
+- **可拖拽布局**：所有图表卡片（包括指标卡片）支持拖拽重新排列位置和调整大小
+  - 指标卡片（浏览量、加购量、购买量）可独立拖拽和调整列大小
+  - 布局自动保存到本地存储，刷新后保持
 - **图表导出**：支持导出图表为 PNG 图片
   - 使用 ECharts 原生导出
+- **手动刷新控制**：关闭自动刷新，仅在点击刷新按钮时更新数据
+  - 避免不必要的网络请求，提升性能
 
 ### 主看板图表
 
 1. **数据概览指标卡片** - 显示浏览、加购、购买三种事件类型的总数统计
    - 采用圆形进度环风格，显示各指标占比和数值
+   - 三个指标卡片可独立拖拽和调整大小，支持自由布局
 
 2. **Top N 商品榜** - 水平柱状图显示销量/浏览/加购 Top N 商品
    - 支持点击商品查看详细 Drill-down 分析
@@ -133,18 +147,56 @@
 
 ## 安装和运行
 
-### 0. 运行 Redis (这一步可以先选择不做)
+### 方式一：在线访问
 
-```bash
-# macOS
-brew services start redis
-# 或使用 docker
-docker run -p 6379:6379 redis:7
-```
+直接访问云端部署地址：[**https://mds-datavis-final-dashboard-1.onrender.com**](https://mds-datavis-final-dashboard-1.onrender.com)
 
-### 1. 准备数据
+无需任何安装配置，打开浏览器即可使用。
 
-确保数据文件位于 `backend/archive/events_with_category.csv`，数据格式如下：
+### 方式二：本地运行
+
+#### 前置要求
+
+- Python 3.10+
+- Node.js 16+
+- Git LFS（用于拉取大文件）
+
+#### 运行步骤
+
+1. **克隆仓库**
+   ```bash
+   git clone https://github.com/chenxc-cxc/mds_datavis_final_dashboard
+   cd mds_datavis_final_dashboard
+   ```
+
+2. **拉取数据文件**
+   ```bash
+   git lfs pull
+   ```
+
+3. **安装后端依赖并启动**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   uvicorn app.main:app --reload --port 8000
+   ```
+
+   接口文档：`http://127.0.0.1:8000/api/docs`
+
+4. **安装前端依赖并启动**（新开一个终端）
+   ```bash
+   cd frontend
+   npm install   # 首次运行
+   npm run dev
+   ```
+
+5. **访问应用**
+
+   访问第 4 步终端中显示的本地开发服务器地址（通常是 `http://localhost:5173`）
+
+#### 数据文件说明
+
+数据文件位于 `backend/archive/events_with_category.csv`(未放入)，数据格式如下：
 
 ```text
 timestamp,visitorid,event,itemid,categoryid
@@ -154,51 +206,16 @@ timestamp,visitorid,event,itemid,categoryid
 2015-06-01 21:18:20,121688,transaction,15335,1098
 ```
 
-首次运行后端时会自动将 CSV 转换为 DuckDB 格式（存储在 `backend/cache/events.duckdb`）(较耗时,请耐心等待)。
+数据 duckbd 文件通过 Git LFS 管理，使用 `git lfs pull` 拉取。
 
-### 2. 启动后端（FastAPI）
+#### 环境变量配置
 
-```bash
-# 注意选择你心仪的py环境
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
-
-接口文档：`http://127.0.0.1:8000/api/docs`
-
-### 3. 启动前端（React + Vite）
+前端默认会连接 `http://localhost:8000/api`，如需修改后端地址，可在 `frontend/.env` 中设置：
 
 ```bash
-cd frontend
-npm install   # 首次运行
-npm run dev
+VITE_API_BASE_URL=http://localhost:8000/api
 ```
 
-默认会连接 `http://localhost:8000/api`，可在 `frontend/.env` 中调整 `VITE_API_BASE_URL`。
-
-访问地址：`http://localhost:5173`（Vite 默认端口）
-
-### 4. 生产环境部署(未部署)
-
-#### 后端部署
-
-使用 Gunicorn 部署：
-
-```bash
-gunicorn app.main:app --workers 4 --bind 0.0.0.0:8000
-```
-
-#### 前端部署
-
-构建静态文件：
-
-```bash
-cd frontend
-npm run build
-```
-
-构建产物在 `frontend/dist` 目录，可使用 Nginx 或其他静态文件服务器托管。
 
 ## 项目结构
 
@@ -360,10 +377,11 @@ project/
 
 ## 注意事项
 
-1. 首次运行会生成 DuckDB 数据库文件和用户分群表，耗时取决于硬件（通常 1~2 分钟）；完成后再次启动约 5~8 秒
-2. 建议使用至少 4GB 内存的服务器运行
-3. 数据文件路径、缓存目录可在 `backend/app/core/config.py` 中配置
-4. Drill-down 功能需要后端 API；请确保 FastAPI 已启动
-5. Redis 缓存为可选，但强烈推荐使用以提升性能
-6. 前端开发服务器默认端口为 5173，后端 API 默认端口为 8000
-7. 所有抽屉（Drawer）支持从左侧边界拖拽调整宽度，范围 300-1200px
+1. **首次运行**：若选择在`backend/archive`中放入原始 csv 文件,且删除了 DuckDB 文件,首次运行会生成 DuckDB 数据库文件和用户分群表，耗时取决于硬件（通常 1~2 分钟）；完成后再次启动约 5~8 秒
+2. **内存要求**：建议使用至少 4GB 内存的服务器运行
+3. **数据库文件**：通过 Git LFS 管理，使用 `git lfs pull` 拉取大文件
+4. **配置**：数据文件路径、缓存目录可在 `backend/app/core/config.py` 中配置
+5. **后端依赖**：Drill-down 功能需要后端 API；本地运行时请确保 FastAPI 已启动
+6. **端口**：前端开发服务器默认端口为 5173，后端 API 默认端口为 8000
+8. **抽屉功能**：所有抽屉（Drawer）支持从左侧边界拖拽调整宽度，范围 300-1200px
+9. **布局保存**：图表布局会自动保存到浏览器本地存储，刷新后保持
